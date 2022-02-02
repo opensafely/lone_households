@@ -4,12 +4,15 @@ expectations:
   population_size: 1000
 
 actions:
+  # for creating multiple cohorts where the only difference is the index date, then have multiple actions in the yaml, one for each index date
+  # the range is specified as: --index-date-range "YYYY-MM-DD to YYYY-MM-DD by (week|month)" 
+  # as files are large, use csv.gz to make them smaller
 
-  generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition
+  generate_study_population_1:
+    run: cohortextractor generate_cohort --index-date-range "2018-01-01 to 2022-01-01 by month" --output-format=csv.gz
     outputs:
       highly_sensitive:
-        cohort: output/input.csv
+        cohort: output/input-YYYY-MM-DD.csv.gz
 
   describe:
     run: python:latest python analysis/report.py
