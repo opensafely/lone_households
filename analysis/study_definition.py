@@ -61,7 +61,7 @@ study = StudyDefinition(
         (care_home_type = "PR") AND
         has_follow_up AND
         is_registered_with_tpp_feb2020 AND
-        (STP region != "") AND
+        (stp != "") AND
         (imd = "1" OR "2" OR "3" OR "4" OR "5") AND
         household_size <= 15
         """"""""",
@@ -186,6 +186,34 @@ study = StudyDefinition(
             "incidence": 1,
         },
         ),
+        
+        ## household size
+        living_alone=patients.categorised_as(
+            {
+                "0": "DEFAULT",
+                "living alone": "household_size ==  1",
+                "not living alone": "household_size > 1",
+            }
+        return_expectations={
+                "rate":"universal",
+                "category": {"ratios": {"living alone": 0.2, "not living alone": 0.8 }}
+        },
+        ),
+
+        ageband_broad = patients.categorised_as(
+            {   
+                "0": "DEFAULT",
+                "18-39": """ age >=  18 AND age < 40""",
+                "40-59": """ age >=  40 AND age < 60""",
+                "60-79": """ age >=  60 AND age < 80""",
+                "80+": """ age >=  80 AND age < 120""",
+            },
+            return_expectations={
+                "rate":"universal",
+                "category": {"ratios": {"18-39": 0.3, "40-59": 0.3, "60-79":0.2, "80+":0.2 }}
+            },
+        ),
+
 
         ## non-TPP patients in household
         mixed_household=patients.household_as_of(
@@ -307,7 +335,7 @@ study = StudyDefinition(
         ## OCD
 
         ## mental_illness_history_codes (codelists combined for history of)
-        mental_illness)history=patients.with_these_clinical_events(
+        mental_illness_history=patients.with_these_clinical_events(
             mental_illness_history_codes
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
             episode_defined_as=[]
@@ -390,6 +418,22 @@ study = StudyDefinition(
         ),
     ),
 
+measures = [
+    Measure(
+        id="depression_rate",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+Measure(
+        id="anxiety_rate",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+]
 
 
 
