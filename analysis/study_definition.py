@@ -9,7 +9,7 @@ from cohortextractor import (
     codelist_from_csv,
     combine_codelists,
     filter_codes_by_category,
-    Measure
+    Measure,
 )     
 
 # Import all codelists
@@ -54,9 +54,10 @@ study = StudyDefinition(
 
     population=patients.satisfying(
         # first argument is a string defining the population of interest using elementary logic syntax (= != < <= >= > AND OR NOT + - * /)
-        """""""""
+        """
         (age >= 18 AND age < 120) AND 
         is_registered_with_tpp AND 
+        (NOT died) AND
         (sex = "M" OR sex = "F") AND 
         (care_home_type = "PR") AND
         has_follow_up AND
@@ -64,7 +65,7 @@ study = StudyDefinition(
         (stp != "") AND
         (imd = "1" OR "2" OR "3" OR "4" OR "5") AND
         household_size <= 15
-        """"""""",
+        """,
         
         # all subsequent arguments are variable definitions
         # can use variables in here that are defined later in the file - don't have to define again here
@@ -122,6 +123,10 @@ study = StudyDefinition(
         ),
         
     # REGISTRATION DETAILS
+        # died
+        died=patients.died_from_any_cause(
+            on_or_before="index_date"
+        ),
 
         ## registered with TPP on index date
         is_registered_with_tpp=patients.registered_as_of(
@@ -187,7 +192,7 @@ study = StudyDefinition(
         },
         ),
         
-        ## household size
+        ## living alone status
         living_alone=patients.categorised_as(
             {
                 "0": "DEFAULT",
@@ -327,12 +332,62 @@ study = StudyDefinition(
             }, 
         ), 
         ## SELF HARM
+        self_harm=patients.with_these_clinical_events(
+            combine codelists(
+                self_harm_10plus_codes,
+                self_harm_15plus_codes,
+                self_harm_icd_codes,
+                suicide_codes,
+            )    
+            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+            episode_defined_as=[]
+            returning="binary_flag",
+            return_expectations={
+                "incidence": 0.1,
+            }, 
+        ), 
 
         ## EATING DISORDERS
+        eating_disorder=patients.with_these_clinical_events(
+            combine codelists(
+                eating_disorder_codes,
+                eating_disorder_icd_codes,
+            )    
+            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+            episode_defined_as=[]
+            returning="binary_flag",
+            return_expectations={
+                "incidence": 0.1,
+            }, 
+        ), 
 
         ## SEVERE MENTAL ILLNESS
+        severe_mental_illness=patients.with_these_clinical_events(
+            combine codelists(
+                severe_mental_illness_codes,
+                severe_mental_illness_icd_codes,
+            )    
+            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+            episode_defined_as=[]
+            returning="binary_flag",
+            return_expectations={
+                "incidence": 0.1,
+            }, 
+        ), 
 
         ## OCD
+        ocd=patients.with_these_clinical_events(
+            combine codelists(
+                ocd_codes,
+                ocd_icd_codes,
+            )    
+            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+            episode_defined_as=[]
+            returning="binary_flag",
+            return_expectations={
+                "incidence": 0.1,
+            }, 
+        ), 
 
         ## mental_illness_history_codes (codelists combined for history of)
         mental_illness_history=patients.with_these_clinical_events(

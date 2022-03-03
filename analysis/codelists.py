@@ -14,8 +14,8 @@ depression_codes = codelist_from_csv(
 
 depression_icd_codes = codelist_from_csv(
     "user-emilyherrett-depression_icd10.csv"
-    system="icd10"
-    column="code"
+    system="icd10",
+    column="code",
 )
 
 # severe mental illness
@@ -27,8 +27,8 @@ severe_mental_illness_codes = codelist_from_csv(
 
 severe_mental_illness_icd_codes = codelist_from_csv(
     "user-emilyherrett-severe_mental_illness_icd10.csv"
-    system="icd10"
-    column="code"
+    system="icd10",
+    column="code",
 )
 
 # Anxiety - general
@@ -40,8 +40,8 @@ anxiety_codes = codelist_from_csv(
 
 anxiety_icd_codes = codelist_from_csv(
     "user-emilyherrett-anxiety_icd10.csv"
-    system="icd10"
-    column="code"
+    system="icd10",
+    column="code",
 )
 
 # Anxiety - obsessive compulsive disorder
@@ -53,8 +53,8 @@ ocd_codes = codelist_from_csv(
 
 ocd_icd_codes = codelist_from_csv(
     "user-emilyherrett-ocd_icd10.csv"
-    system="icd10"
-    column="code"
+    system="icd10",
+    column="code",
 )
 
 # Eating disorders
@@ -66,8 +66,8 @@ eating_disorders_codes = codelist_from_csv(
 
 eating_disorders_icd_codes = codelist_from_csv(
     "user-emilyherrett-eating_disorder_icd10.csv"
-    system="icd10"
-    column="code"
+    system="icd10",
+    column="code",
 )
 
 # Self harm - aged >= 10 years
@@ -87,12 +87,12 @@ self_harm_15plus_codes = codelist_from_csv(
 # Self harm - ICD10
 self_harm_icd_codes = codelist_from_csv(
     "user-emilyherrett-self_harm_icd10.csv"
-    system="icd10"
-    column="code"
+    system="icd10",
+    column="code",
 )
 
 # Suicide
-suicide = codelist_from_csv(
+suicide_codes = codelist_from_csv(
     "codelists/user-hjforbes-suicide-icd-10.csv",
     system="snomed",
     column="code",
