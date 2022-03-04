@@ -19,22 +19,6 @@ from codelists import *
 # Specify study definition
 
 study = StudyDefinition(
-    # configure the expectations framework
-    # default_expectations, index_date and population are reserved names within StudyDefinition()
-    # all variables that you want in your dataset are declared wihtin the StudyDefinition() function, using functions in the form patients.function_name()
-    # for multiple study definition files, use suffix e.g. study_definition_copd.py, study_definition_asthma.py - will give corresponding outputs as input_copd.csv, etc
-    # or if the only difference between 2 study definitions is the index date, then you can avoid having multiple study definition files
-    # for this we will need to use the yaml
-
-    # define default dummy data behaviour
-    # dummy data for all variables defined here
-    # event dates are expected to be distributed between 1900 and today, with exponentially increasing frequency
-    # events occurring for 50% of patients
-    # values for binary variables positive 50% of the time (i.e. 0 for 50%, 1 for 50%)
-    # values for categorical present (non-missing) 50% of the time
-    # values for numeric variables present 50% of the time
-    # values for date variables can either be "exponential_increase" or "universal"
-    # override default expectations with "return expectations" argument
     default_expectations={
         "date": {"earliest": "1900-01-01", "latest": "today"},
         "rate": "uniform",
@@ -296,7 +280,7 @@ study = StudyDefinition(
             "2020-02-01",
             returning="rural_urban_classification",
             return_expectations={
-                "rate": "universal"
+                "rate": "universal",
                 "category": {"ratios": {1: 0.125, 2: 0.125, 3: 0.125, 4: 0.125, 5: 0.125, 6: 0.125, 7: 0.125, 8: 0.125}},
             }
         ),
@@ -306,12 +290,11 @@ study = StudyDefinition(
 
         ## DEPRESSION
         depression=patients.with_these_clinical_events(
-            combine codelists(
+            combine_codelists(
                 depression_codes,
                 depression_icd_codes,
-            )    
+            ),    
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            episode_defined_as=[]
             returning="binary_flag",
             return_expectations={
                 "incidence": 0.1,
@@ -320,12 +303,11 @@ study = StudyDefinition(
 
         ## ANXIETY
         anxiety=patients.with_these_clinical_events(
-            combine codelists(
+            combine_codelists(
                 anxiety_codes,
                 anxiety_icd_codes,
-            )    
+            ),    
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            episode_defined_as=[]
             returning="binary_flag",
             return_expectations={
                 "incidence": 0.1,
@@ -333,14 +315,13 @@ study = StudyDefinition(
         ), 
         ## SELF HARM
         self_harm=patients.with_these_clinical_events(
-            combine codelists(
+            combine_codelists(
                 self_harm_10plus_codes,
                 self_harm_15plus_codes,
                 self_harm_icd_codes,
                 suicide_codes,
-            )    
+            ),    
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            episode_defined_as=[]
             returning="binary_flag",
             return_expectations={
                 "incidence": 0.1,
@@ -349,13 +330,12 @@ study = StudyDefinition(
 
         ## EATING DISORDERS
         eating_disorder=patients.with_these_clinical_events(
-            combine codelists(
+            combine_codelists(
                 eating_disorder_codes,
                 eating_disorder_icd_codes,
-            )    
+            ),    
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            episode_defined_as=[]
-            returning="binary_flag",
+           returning="binary_flag",
             return_expectations={
                 "incidence": 0.1,
             }, 
@@ -363,13 +343,12 @@ study = StudyDefinition(
 
         ## SEVERE MENTAL ILLNESS
         severe_mental_illness=patients.with_these_clinical_events(
-            combine codelists(
+            combine_codelists(
                 severe_mental_illness_codes,
                 severe_mental_illness_icd_codes,
-            )    
+            ),    
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            episode_defined_as=[]
-            returning="binary_flag",
+           returning="binary_flag",
             return_expectations={
                 "incidence": 0.1,
             }, 
@@ -377,12 +356,11 @@ study = StudyDefinition(
 
         ## OCD
         ocd=patients.with_these_clinical_events(
-            combine codelists(
+            combine_codelists(
                 ocd_codes,
                 ocd_icd_codes,
-            )    
+            ),    
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            episode_defined_as=[]
             returning="binary_flag",
             return_expectations={
                 "incidence": 0.1,
@@ -391,15 +369,14 @@ study = StudyDefinition(
 
         ## mental_illness_history_codes (codelists combined for history of)
         mental_illness_history=patients.with_these_clinical_events(
-            mental_illness_history_codes
+            mental_illness_history_codes,
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            episode_defined_as=[]
             returning="binary_flag",
             return_expectations={
                 "incidence": 0.1,
             }, 
         ),         
-)
+
 
 
 
@@ -472,23 +449,24 @@ study = StudyDefinition(
             return_expectations={"incidence": 0.01,},
         ),
     ),
+)
 
 measures = [
-    Measure(
-        id="depression_rate",
-        numerator="depression",
-        denominator="population",
-        group_by=["living_alone"],
-    ),
+        Measure(
+            id="depression_rate",
+            numerator="depression",
+            denominator="population",
+            group_by=["living_alone"],
+        ),
 
-Measure(
-        id="anxiety_rate",
-        numerator="anxiety",
-        denominator="population",
-        group_by=["living_alone"],
-    ),
+        Measure(
+            id="anxiety_rate",
+            numerator="anxiety",
+            denominator="population",
+            group_by=["living_alone"],
+        ),
+    ]
 
-]
 
 
 
