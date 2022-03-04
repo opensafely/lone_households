@@ -1,5 +1,6 @@
 from cohortextractor import (
     codelist_from_csv,
+    combine_codelists,
     codelist,
 )
 
@@ -13,20 +14,20 @@ depression_codes = codelist_from_csv(
 )
 
 depression_icd_codes = codelist_from_csv(
-    "user-emilyherrett-depression_icd10.csv"
+    "codelists/user-emilyherrett-depression_icd10.csv",
     system="icd10",
     column="code",
 )
 
 # severe mental illness
 severe_mental_illness_codes = codelist_from_csv(
-    "codelists/user-hjforbes-severe-mental-illness.csv",
-    system="snomed",
-    column="code",
+    "codelists/opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv",
+    system="ctv3",
+    column="CTV3Code",
 )
 
 severe_mental_illness_icd_codes = codelist_from_csv(
-    "user-emilyherrett-severe_mental_illness_icd10.csv"
+    "codelists/user-emilyherrett-severe_mental_illness_icd10.csv",
     system="icd10",
     column="code",
 )
@@ -39,7 +40,7 @@ anxiety_codes = codelist_from_csv(
 )
 
 anxiety_icd_codes = codelist_from_csv(
-    "user-emilyherrett-anxiety_icd10.csv"
+    "codelists/user-emilyherrett-anxiety_icd10.csv",
     system="icd10",
     column="code",
 )
@@ -52,7 +53,7 @@ ocd_codes = codelist_from_csv(
 )
 
 ocd_icd_codes = codelist_from_csv(
-    "user-emilyherrett-ocd_icd10.csv"
+    "codelists/user-emilyherrett-ocd_icd10.csv",
     system="icd10",
     column="code",
 )
@@ -65,7 +66,7 @@ eating_disorders_codes = codelist_from_csv(
 )
 
 eating_disorders_icd_codes = codelist_from_csv(
-    "user-emilyherrett-eating_disorder_icd10.csv"
+    "codelists/user-emilyherrett-eating_disorder_icd10.csv",
     system="icd10",
     column="code",
 )
@@ -86,7 +87,7 @@ self_harm_15plus_codes = codelist_from_csv(
 
 # Self harm - ICD10
 self_harm_icd_codes = codelist_from_csv(
-    "user-emilyherrett-self_harm_icd10.csv"
+    "codelists/user-emilyherrett-self_harm_icd10.csv",
     system="icd10",
     column="code",
 )
@@ -94,7 +95,7 @@ self_harm_icd_codes = codelist_from_csv(
 # Suicide
 suicide_codes = codelist_from_csv(
     "codelists/user-hjforbes-suicide-icd-10.csv",
-    system="snomed",
+    system="icd10",
     column="code",
 )
 
@@ -109,27 +110,14 @@ ethnicity_codes_6 = codelist_from_csv(
 
 # High risk and not high risk codes, to define clinical vulnerability to complications from COVID-19 infection/shielding
 high_risk_codes = codelist(
-    ['1300561000000107'], system="snomed")
+    ['1300561000000107'], 
+    system="snomed",
+    )
 
 not_high_risk_codes = codelist(
-    ['1300591000000101', '1300571000000100'], system="snomed")
-
-
-# HISTORY OF MENTAL ILLNESS - COMBINING CODELSTS
-mental_illness_history_codes = combine_codelists(
-    # Depression
-    depression_codes, depression_icd_codes,
-    # Schizophrenia, Bipolar effective disorder, Psychoses
-    severe_mental_illness_codes, severe_mental_illness_icd_codes,
-    # Anxiety 
-    anxiety_codes, anxiety_icd_codes,
-    # Eating disorder codes
-    eating_disorders_codes, eating_disorders_icd_codes,
-    # OCD codes
-    ocd_codes, ocd_icd_codes,
-    # Self harm and suicide codes
-    self_harm_10plus_codes, self_harm_15plus_codes, self_harm_icd_codes, suicide_codes,
-)
+    ['1300591000000101', '1300571000000100'], 
+    system="snomed",
+    )
 
 
 
