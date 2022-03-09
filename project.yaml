@@ -9,7 +9,7 @@ actions:
   # as files are large, use csv.gz to make them smaller
 
   generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-01-01 to 2019-01-01 by month" --output-dir=output/measures --output-format=csv
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-01-01 to 2022-01-01 by month" --output-dir=output/measures --output-format=csv
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv

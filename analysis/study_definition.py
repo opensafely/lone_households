@@ -43,7 +43,15 @@ study = StudyDefinition(
         # first argument is a string defining the population of interest using elementary logic syntax (= != < <= >= > AND OR NOT + - * /)
         """
         (age >= 18 AND age < 120) AND 
-        (sex = "M" OR sex = "F")  
+        is_registered_with_tpp AND 
+        (NOT died) AND
+        (sex = "M" OR sex = "F") AND 
+        (care_home_type = "PR") AND
+        has_follow_up AND
+        is_registered_with_tpp_feb2020 AND
+        (stp != "") AND
+        (imd = "1" OR "2" OR "3" OR "4" OR "5") AND
+        household_size <= 15
         """,
           
     ),
@@ -281,6 +289,14 @@ study = StudyDefinition(
                 "incidence": 0.1,
             }, 
         ),
+        depression_hosp=patients.admitted_to_hospital(
+            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+            with_these_diagnoses=depression_icd_codes,
+            returning="binary_flag",
+            return_expectations={
+                "incidence": 0.1,
+            }, 
+        ),
 
         ## ANXIETY
         anxiety=patients.with_these_clinical_events(
@@ -307,7 +323,7 @@ study = StudyDefinition(
 
         ## EATING DISORDERS
         eating_disorder=patients.with_these_clinical_events(
-            codelist=eating_disorder_codes,
+            codelist=eating_disorders_codes,
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
             returning="binary_flag",
             return_expectations={
@@ -335,8 +351,78 @@ study = StudyDefinition(
             }, 
         ), 
 
+    ### PRIMIS overall flag for shielded group
+    shielded=patients.satisfying(
+            """ severely_clinically_vulnerable
+            AND NOT less_vulnerable""", 
+        return_expectations={
+            "incidence": 0.01,
+                },
 
+            ### SHIELDED GROUP - first flag all patients with "high risk" codes
+        severely_clinically_vulnerable=patients.with_these_clinical_events(
+            high_risk_codes, # note no date limits set
+            find_last_match_in_period = True,
+            return_expectations={"incidence": 0.02,},
+        ),
+
+        # find date at which the high risk code was added
+        date_severely_clinically_vulnerable=patients.date_of(
+            "severely_clinically_vulnerable", 
+            date_format="YYYY-MM-DD",   
+        ),
+
+        ### NOT SHIELDED GROUP (medium and low risk) - only flag if later than 'shielded'
+        less_vulnerable=patients.with_these_clinical_events(
+            not_high_risk_codes, 
+            on_or_after="date_severely_clinically_vulnerable",
+            return_expectations={"incidence": 0.01,},
+        ),
+    ),
+    
+    
+    # flag the newly expanded shielding group as of 15 feb (should be a subset of the previous flag)
+    shielded_since_feb_15 = patients.satisfying(
+            """severely_clinically_vulnerable_since_feb_15
+                AND NOT new_shielding_status_reduced
+                AND NOT previous_flag
+            """,
+        return_expectations={
+            "incidence": 0.01,
+                },
+        
+        ### SHIELDED GROUP - first flag all patients with "high risk" codes
+        severely_clinically_vulnerable_since_feb_15=patients.with_these_clinical_events(
+            high_risk_codes, 
+            on_or_after= "2021-02-15",
+            find_last_match_in_period = False,
+            return_expectations={"incidence": 0.02,},
+        ),
+
+        # find date at which the high risk code was added
+        date_vulnerable_since_feb_15=patients.date_of(
+            "severely_clinically_vulnerable_since_feb_15", 
+            date_format="YYYY-MM-DD",   
+        ),
+
+        ### check that patient's shielding status has not since been reduced to a lower risk level 
+         # e.g. due to improved clinical condition of patient
+        new_shielding_status_reduced=patients.with_these_clinical_events(
+            not_high_risk_codes,
+            on_or_after="date_vulnerable_since_feb_15",
+            return_expectations={"incidence": 0.01,},
+        ),
+        
+        # anyone with a previous flag of any risk level will not be added to the new shielding group
+        previous_flag=patients.with_these_clinical_events(
+            combine_codelists(high_risk_codes, not_high_risk_codes),
+            on_or_before="2021-02-14",
+            return_expectations={"incidence": 0.01,},
+        ),
+    ),
 )
+
+
 
 measures = [
     Measure(
@@ -345,6 +431,36 @@ measures = [
         denominator="population",
         group_by=["living_alone"],
     ),
+
+    Measure(
+        id="anxiety_rate",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="ocd_rate",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="severe_mental_illness_rate",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+
 
 ]
 
