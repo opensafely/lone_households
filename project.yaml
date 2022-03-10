@@ -20,3 +20,10 @@ actions:
     outputs:
       moderately_sensitive:
         measure: output/measures/measure_*.csv
+  describe:
+    run: stata-mp:latest analysis/timeseries.do
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive:
+        log: output/tsreg.txt
+        tables: output/tabfig/tsreg_tables.xlsx      
