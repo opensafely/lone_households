@@ -505,6 +505,7 @@ study = StudyDefinition(
 
 
 measures = [
+    # STRATIFIED BY LIVING ALONE
     Measure(
         id="depression_rate",
         numerator="depression",
@@ -547,11 +548,104 @@ measures = [
         group_by=["living_alone"],
     ),
 
+# STRATIFIED BY LIVING ALONE AND SEX
+Measure(
+        id="depression_la_and_sex",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "sex"],
+    ),
+
+Measure(
+        id="anxiety_la_and_sex",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "sex"],
+    ),
+
+Measure(
+        id="ocd_la_and_sex",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "sex"],
+    ),
+
+Measure(
+        id="severe_mental_illness_la_and_sex",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone", "sex"],
+    ),
+
+Measure(
+        id="eating_disorder_la_and_sex",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "sex"],
+    ),
+
+Measure(
+        id="self_harm_la_and_sex",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "sex"],
+    ),
+
+# STRATIFIED BY LIVING ALONE AND AGE
+Measure(
+        id="depression_la_and_age",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "ageband_broad"],
+    ),
+
+Measure(
+        id="anxiety_la_and_age",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "ageband_broad"],
+    ),
+
+Measure(
+        id="ocd_la_and_age",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "ageband_broad"],
+    ),
+
+Measure(
+        id="severe_mental_illness_la_and_age",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone", "ageband_broad"],
+    ),
+
+Measure(
+        id="eating_disorder_la_and_age",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "ageband_broad"],
+    ),
+
+Measure(
+        id="self_harm_la_and_age",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "ageband_broad"],
+    ),
 
 
 ]
 
 
 
+"""
+Region (Sustainability Transformation Partnership level (STP, English NHS administrative region)),
+Urban/rural location,
+SES (IMD, in quintiles),
+Ethnicity,
+Eligibility for shielding, and 
+History of mental health problems 
 
+"""
 
