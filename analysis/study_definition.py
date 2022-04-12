@@ -275,6 +275,34 @@ study = StudyDefinition(
             }
         ),
 
+    ### PRIMIS overall flag for shielded group
+    shielded=patients.satisfying(
+            """ severely_clinically_vulnerable
+            AND NOT less_vulnerable""", 
+        return_expectations={
+            "incidence": 0.01,
+                },
+
+            ### SHIELDED GROUP - first flag all patients with "high risk" codes
+        severely_clinically_vulnerable=patients.with_these_clinical_events(
+            high_risk_codes, # note no date limits set
+            find_last_match_in_period = True,
+            return_expectations={"incidence": 0.02,},
+        ),
+
+        # find date at which the high risk code was added
+        date_severely_clinically_vulnerable=patients.date_of(
+            "severely_clinically_vulnerable", 
+            date_format="YYYY-MM-DD",   
+        ),
+
+        ### NOT SHIELDED GROUP (medium and low risk) - only flag if later than 'shielded'
+        less_vulnerable=patients.with_these_clinical_events(
+            not_high_risk_codes, 
+            on_or_after="date_severely_clinically_vulnerable",
+            return_expectations={"incidence": 0.01,},
+        ),
+    ),
 
 
 
@@ -431,80 +459,151 @@ study = StudyDefinition(
         ),
 
 
-    ### PRIMIS overall flag for shielded group
-    shielded=patients.satisfying(
-            """ severely_clinically_vulnerable
-            AND NOT less_vulnerable""", 
-        return_expectations={
-            "incidence": 0.01,
-                },
 
-            ### SHIELDED GROUP - first flag all patients with "high risk" codes
-        severely_clinically_vulnerable=patients.with_these_clinical_events(
-            high_risk_codes, # note no date limits set
-            find_last_match_in_period = True,
-            return_expectations={"incidence": 0.02,},
-        ),
 
-        # find date at which the high risk code was added
-        date_severely_clinically_vulnerable=patients.date_of(
-            "severely_clinically_vulnerable", 
-            date_format="YYYY-MM-DD",   
-        ),
 
-        ### NOT SHIELDED GROUP (medium and low risk) - only flag if later than 'shielded'
-        less_vulnerable=patients.with_these_clinical_events(
-            not_high_risk_codes, 
-            on_or_after="date_severely_clinically_vulnerable",
-            return_expectations={"incidence": 0.01,},
-        ),
-    ),
-    
-    
-    # flag the newly expanded shielding group as of 15 feb (should be a subset of the previous flag)
-    shielded_since_feb_15 = patients.satisfying(
-            """severely_clinically_vulnerable_since_feb_15
-                AND NOT new_shielding_status_reduced
-                AND NOT previous_flag
-            """,
-        return_expectations={
-            "incidence": 0.01,
-                },
+       ## HISTORY OF MENTAL HEALTH DISORDERS IN THE PREVIOUS FIVE YEARS
+       previous_mental_disorder=patients.satisfying(
+            "depression5yr OR anxiety5yr OR ocd5yr OR severe_mental_illness5yr OR eating_disorder5yr OR self_harm5yr",
+
+            ## DEPRESSION
+            depression5yr=patients.with_these_clinical_events(
+                codelist=depression_codes,    
+                between=["index_date - 5 years", "index_date - 1 day"],
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+
+            ## ANXIETY
+            anxiety5yr=patients.with_these_clinical_events(
+                codelist=anxiety_codes,    
+                between=["index_date - 5 years", "index_date - 1 day"],
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ), 
+
+            ## OCD
+            ocd5yr=patients.with_these_clinical_events(
+                codelist=ocd_codes,
+                between=["index_date - 5 years", "index_date - 1 day"],
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ), 
+
+            ## SEVERE MENTAL ILLNESS
+            severe_mental_illness5yr=patients.satisfying(
+                "smi_gp5yr OR smi_hosp5yr OR smi_emerg5yr",
         
-        ### SHIELDED GROUP - first flag all patients with "high risk" codes
-        severely_clinically_vulnerable_since_feb_15=patients.with_these_clinical_events(
-            high_risk_codes, 
-            on_or_after= "2021-02-15",
-            find_last_match_in_period = False,
-            return_expectations={"incidence": 0.02,},
-        ),
+                smi_gp5yr=patients.with_these_clinical_events(
+                    codelist=severe_mental_illness_codes,
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ), 
 
-        # find date at which the high risk code was added
-        date_vulnerable_since_feb_15=patients.date_of(
-            "severely_clinically_vulnerable_since_feb_15", 
-            date_format="YYYY-MM-DD",   
-        ),
+                smi_hosp5yr=patients.admitted_to_hospital(
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    with_these_diagnoses=severe_mental_illness_icd_codes,
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ),
+                
+                smi_emerg5yr=patients.attended_emergency_care(
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    with_these_diagnoses=severe_mental_illness_icd_codes,
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ),
+            ),
 
-        ### check that patient's shielding status has not since been reduced to a lower risk level 
-         # e.g. due to improved clinical condition of patient
-        new_shielding_status_reduced=patients.with_these_clinical_events(
-            not_high_risk_codes,
-            on_or_after="date_vulnerable_since_feb_15",
-            return_expectations={"incidence": 0.01,},
-        ),
-        
-        # anyone with a previous flag of any risk level will not be added to the new shielding group
-        previous_flag=patients.with_these_clinical_events(
-            combine_codelists(high_risk_codes, not_high_risk_codes),
-            on_or_before="2021-02-14",
-            return_expectations={"incidence": 0.01,},
-        ),
-    ),
+            ## SELF HARM
+            self_harm5yr=patients.satisfying(
+                "self_harm_gp5yr OR self_harm_hosp5yr OR self_harm_emerg5yr",
+
+                self_harm_gp5yr=patients.with_these_clinical_events(
+                    combine_codelists(
+                        self_harm_10plus_codes,
+                        self_harm_15plus_codes,
+                    ),    
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ), 
+                self_harm_hosp5yr=patients.admitted_to_hospital(
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    with_these_diagnoses=self_harm_icd_codes,
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ),
+                
+                self_harm_emerg5yr=patients.attended_emergency_care(
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    with_these_diagnoses=self_harm_icd_codes,
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ),
+
+            ),
+
+            ## EATING DISORDERS
+            eating_disorder5yr=patients.satisfying(
+                "eating_gp5yr OR eating_hosp5yr OR eating_emerg5yr",
+                eating_gp5yr=patients.with_these_clinical_events(
+                    codelist=eating_disorders_codes,
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ), 
+
+                eating_hosp5yr=patients.admitted_to_hospital(
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    with_these_diagnoses=eating_disorders_icd_codes,
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ),
+                
+                eating_emerg5yr=patients.attended_emergency_care(
+                    between=["index_date - 5 years", "index_date - 1 day"],
+                    with_these_diagnoses=eating_disorders_icd_codes,
+                    returning="binary_flag",
+                    return_expectations={
+                        "incidence": 0.1,
+                    }, 
+                ),
+            ),
+       ),
+
+
+
+
 )
 
-
+# MEASURES FOR TIME SERIES
 
 measures = [
+
     # STRATIFIED BY LIVING ALONE
     Measure(
         id="depression_rate",
@@ -547,6 +646,87 @@ measures = [
         denominator="population",
         group_by=["living_alone"],
     ),
+
+
+    #SEVERE MENTAL ILLNESS, EATING DISORDERS AND SELF HARM BROKEN DOWN INTO CONSTITUENT PARTS
+    Measure(
+        id="severe_mental_illness_rate_gp",
+        numerator="smi_gp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="severe_mental_illness_rate_hosp",
+        numerator="smi_hosp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="severe_mental_illness_rate_emerg",
+        numerator="smi_emerg",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+
+    Measure(
+        id="eating_disorder_rate_gp",
+        numerator="eating_gp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="eating_disorder_rate_hosp",
+        numerator="eating_hosp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="eating_disorder_rate_emerg",
+        numerator="eating_emerg",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="eating_disorder_rate_death",
+        numerator="eating_death",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate_gp",
+        numerator="self_harm_gp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate_hosp",
+        numerator="self_harm_hosp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate_emerg",
+        numerator="self_harm_emerg",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate_death",
+        numerator="self_harm_death",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
 
 # STRATIFIED BY LIVING ALONE AND SEX
 Measure(
@@ -634,18 +814,266 @@ Measure(
         group_by=["living_alone", "ageband_broad"],
     ),
 
+# STRATIFIED BY LIVING ALONE AND ETHNICITY
+Measure(
+        id="depression_la_and_eth",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "ethnicity6"],
+    ),
+
+Measure(
+        id="anxiety_la_and_eth",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "ethnicity6"],
+    ),
+
+Measure(
+        id="ocd_la_and_eth",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "ethnicity6"],
+    ),
+
+Measure(
+        id="severe_mental_illness_la_and_eth",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone", "ethnicity6"],
+    ),
+
+Measure(
+        id="eating_disorder_la_and_eth",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "ethnicity6"],
+    ),
+
+Measure(
+        id="self_harm_la_and_eth",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "ethnicity6"],
+    ),
+
+# STRATIFIED BY LIVING ALONE AND IMD
+Measure(
+        id="depression_la_and_ses",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "imd"],
+    ),
+
+Measure(
+        id="anxiety_la_and_ses",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "imd"],
+    ),
+
+Measure(
+        id="ocd_la_and_ses",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "imd"],
+    ),
+
+Measure(
+        id="severe_mental_illness_la_and_ses",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone", "imd"],
+    ),
+
+Measure(
+        id="eating_disorder_la_and_ses",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "imd"],
+    ),
+
+Measure(
+        id="self_harm_la_and_ses",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "imd"],
+    ),
+
+# STRATIFIED BY LIVING ALONE AND REGION (STP)
+Measure(
+        id="depression_la_and_stp",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "stp"],
+    ),
+
+Measure(
+        id="anxiety_la_and_stp",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "stp"],
+    ),
+
+Measure(
+        id="ocd_la_and_stp",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "stp"],
+    ),
+
+Measure(
+        id="severe_mental_illness_la_and_stp",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone", "stp"],
+    ),
+
+Measure(
+        id="eating_disorder_la_and_stp",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "stp"],
+    ),
+
+Measure(
+        id="self_harm_la_and_stp",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "stp"],
+    ),
+
+# STRATIFIED BY LIVING ALONE AND RURAL/URBAN 
+Measure(
+        id="depression_la_and_urban",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "urban"],
+    ),
+
+Measure(
+        id="anxiety_la_and_urban",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "urban"],
+    ),
+
+Measure(
+        id="ocd_la_and_urban",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "urban"],
+    ),
+
+Measure(
+        id="severe_mental_illness_la_and_urban",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone", "urban"],
+    ),
+
+Measure(
+        id="eating_disorder_la_and_urban",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "urban"],
+    ),
+
+Measure(
+        id="self_harm_la_and_urban",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "urban"],
+    ),
+
+
+
+# STRATIFIED BY LIVING ALONE AND SHIELDING 
+Measure(
+        id="depression_la_and_shielding",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "shielded"],
+    ),
+
+Measure(
+        id="anxiety_la_and_shielding",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "shielded"],
+    ),
+
+Measure(
+        id="ocd_la_and_shielding",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "shielded"],
+    ),
+
+Measure(
+        id="severe_mental_illness_la_and_shielding",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone", "shielded"],
+    ),
+
+Measure(
+        id="eating_disorder_la_and_shielding",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "shielded"],
+    ),
+
+Measure(
+        id="self_harm_la_and_shielding",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "shielded"],
+    ),
+
+# STRATIFIED BY LIVING ALONE AND PREVIOUS MENTAL DISORDERS 
+Measure(
+        id="depression_la_and_historymental",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "previous_mental_disorder"],
+    ),
+
+Measure(
+        id="anxiety_la_and_historymental",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "previous_mental_disorder"],
+    ),
+
+Measure(
+        id="ocd_la_and_historymental",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "previous_mental_disorder"],
+    ),
+
+Measure(
+        id="severe_mental_illness_la_and_historymental",
+        numerator="severe_mental_illness",
+        denominator="population",
+        group_by=["living_alone", "previous_mental_disorder"],
+    ),
+
+Measure(
+        id="eating_disorder_la_and_historymental",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "previous_mental_disorder"],
+    ),
+
+Measure(
+        id="self_harm_la_and_historymental",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "previous_mental_disorder"],
+    ),
+
+
 
 ]
-
-
-
-"""
-Region (Sustainability Transformation Partnership level (STP, English NHS administrative region)),
-Urban/rural location,
-SES (IMD, in quintiles),
-Ethnicity,
-Eligibility for shielding, and 
-History of mental health problems 
-
-"""
-
