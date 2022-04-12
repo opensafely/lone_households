@@ -279,19 +279,14 @@ study = StudyDefinition(
 
 
     # OUTCOMES - MENTAL HEALTH
+    # DEPRESSION, ANXIETY, OCD - PRIMARY CARE ONLY
+    # SERIOUS MENTAL ILLNESS - PRIMARY CARE, A&E ATTENDANCE, HOSPITAL ADMISSION 
+    # SELF HARM, EATING DISORDER - PRIMARY CARE, A&E ATTENDANCE, HOSPITAL ADMISSION, ONS MORTALITY
 
         ## DEPRESSION
         depression=patients.with_these_clinical_events(
             codelist=depression_codes,    
             between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            returning="binary_flag",
-            return_expectations={
-                "incidence": 0.1,
-            }, 
-        ),
-        depression_hosp=patients.admitted_to_hospital(
-            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            with_these_diagnoses=depression_icd_codes,
             returning="binary_flag",
             return_expectations={
                 "incidence": 0.1,
@@ -308,39 +303,6 @@ study = StudyDefinition(
             }, 
         ), 
 
-        ## SELF HARM
-        self_harm=patients.with_these_clinical_events(
-            combine_codelists(
-                self_harm_10plus_codes,
-                self_harm_15plus_codes,
-            ),    
-            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            returning="binary_flag",
-            return_expectations={
-                "incidence": 0.1,
-            }, 
-        ), 
-
-        ## EATING DISORDERS
-        eating_disorder=patients.with_these_clinical_events(
-            codelist=eating_disorders_codes,
-            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            returning="binary_flag",
-            return_expectations={
-                "incidence": 0.1,
-            }, 
-        ), 
-
-        ## SEVERE MENTAL ILLNESS
-        severe_mental_illness=patients.with_these_clinical_events(
-            codelist=severe_mental_illness_codes,
-            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-            returning="binary_flag",
-            return_expectations={
-                "incidence": 0.1,
-            }, 
-        ), 
-
         ## OCD
         ocd=patients.with_these_clinical_events(
             codelist=ocd_codes,
@@ -350,6 +312,124 @@ study = StudyDefinition(
                 "incidence": 0.1,
             }, 
         ), 
+
+        ## SEVERE MENTAL ILLNESS
+        severe_mental_illness=patients.satisfying(
+            "smi_gp OR smi_hosp OR smi_emerg",
+       
+            smi_gp=patients.with_these_clinical_events(
+                codelist=severe_mental_illness_codes,
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ), 
+
+            smi_hosp=patients.admitted_to_hospital(
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                with_these_diagnoses=severe_mental_illness_icd_codes,
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+            
+            smi_emerg=patients.attended_emergency_care(
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                with_these_diagnoses=severe_mental_illness_icd_codes,
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+        ),
+
+        ## SELF HARM
+        self_harm=patients.satisfying(
+            "self_harm_gp OR self_harm_hosp OR self_harm_emerg OR self_harm_death",
+
+            self_harm_gp=patients.with_these_clinical_events(
+                combine_codelists(
+                    self_harm_10plus_codes,
+                    self_harm_15plus_codes,
+                ),    
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ), 
+            self_harm_hosp=patients.admitted_to_hospital(
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                with_these_diagnoses=self_harm_icd_codes,
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+            
+            self_harm_emerg=patients.attended_emergency_care(
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                with_these_diagnoses=self_harm_icd_codes,
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+
+            self_harm_death=patients.with_these_codes_on_death_certificate(
+                combine_codelists(
+                    self_harm_icd_codes,
+                    suicide_codes,
+                ),  
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+        ),
+
+        ## EATING DISORDERS
+        eating_disorder=patients.satisfying(
+            "eating_gp OR eating_hosp OR eating_emerg OR eating_death",
+            eating_gp=patients.with_these_clinical_events(
+                codelist=eating_disorders_codes,
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ), 
+
+            eating_hosp=patients.admitted_to_hospital(
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                with_these_diagnoses=eating_disorders_icd_codes,
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+            
+            eating_emerg=patients.attended_emergency_care(
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                with_these_diagnoses=eating_disorders_icd_codes,
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+            eating_death=patients.with_these_codes_on_death_certificate(
+                codelist=eating_disorders_icd_codes,
+                between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+                returning="binary_flag",
+                return_expectations={
+                    "incidence": 0.1,
+                }, 
+            ),
+        ),
+
 
     ### PRIMIS overall flag for shielded group
     shielded=patients.satisfying(
@@ -440,13 +520,6 @@ measures = [
     ),
 
     Measure(
-        id="self_harm_rate",
-        numerator="self_harm",
-        denominator="population",
-        group_by=["living_alone"],
-    ),
-
-    Measure(
         id="ocd_rate",
         numerator="ocd",
         denominator="population",
@@ -460,10 +533,23 @@ measures = [
         group_by=["living_alone"],
     ),
 
+    Measure(
+        id="eating_disorder_rate",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
 
 
 ]
-
 
 
 
