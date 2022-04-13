@@ -470,5 +470,83 @@ measures = [
 
 
 
+    #SEVERE MENTAL ILLNESS, EATING DISORDERS AND SELF HARM BROKEN DOWN INTO CONSTITUENT PARTS
+    Measure(
+        id="severe_mental_illness_rate_gp",
+        numerator="smi_gp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="severe_mental_illness_rate_hosp",
+        numerator="smi_hosp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="severe_mental_illness_rate_emerg",
+        numerator="smi_emerg",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+
+    Measure(
+        id="eating_disorder_rate_gp",
+        numerator="eating_gp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="eating_disorder_rate_hosp",
+        numerator="eating_hosp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="eating_disorder_rate_emerg",
+        numerator="eating_emerg",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="eating_disorder_rate_death",
+        numerator="eating_death",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate_gp",
+        numerator="self_harm_gp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate_hosp",
+        numerator="self_harm_hosp",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate_emerg",
+        numerator="self_harm_emerg",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
+
+    Measure(
+        id="self_harm_rate_death",
+        numerator="self_harm_death",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
 
 

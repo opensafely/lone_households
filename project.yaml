@@ -6,7 +6,7 @@ expectations:
 actions:
   # Study population for lone households and mental health outcomes
   generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-01-01 to 2020-07-01 by month" --output-dir=output/measures --output-format=csv
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-03-01 to 2022-01-01 by month" --output-dir=output/measures --output-format=csv
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv
