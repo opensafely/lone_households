@@ -342,7 +342,7 @@ study = StudyDefinition(
         ), 
 
         ## SEVERE MENTAL ILLNESS
-        severe_mental_illness=patients.satisfying(
+        severe_mental=patients.satisfying(
             "smi_gp OR smi_hosp OR smi_emerg",
        
             smi_gp=patients.with_these_clinical_events(
@@ -463,7 +463,7 @@ study = StudyDefinition(
 
 
        ## HISTORY OF MENTAL HEALTH DISORDERS IN THE PREVIOUS FIVE YEARS
-       previous_mental_disorder=patients.satisfying(
+       prev_mental_dis=patients.satisfying(
             "depression5yr OR anxiety5yr OR ocd5yr OR severe_mental_illness5yr OR eating_disorder5yr OR self_harm5yr",
 
             ## DEPRESSION
@@ -627,8 +627,8 @@ measures = [
     ),
 
     Measure(
-        id="severe_mental_illness_rate",
-        numerator="severe_mental_illness",
+        id="severe_mental_rate",
+        numerator="severe_mental",
         denominator="population",
         group_by=["living_alone"],
     ),
@@ -652,42 +652,42 @@ measures = [
 
 # STRATIFIED BY LIVING ALONE AND SEX
 Measure(
-        id="depression_la_and_sex",
+        id="depression_sex",
         numerator="depression",
         denominator="population",
         group_by=["living_alone", "sex"],
     ),
 
 Measure(
-        id="anxiety_la_and_sex",
+        id="anxiety_sex",
         numerator="anxiety",
         denominator="population",
         group_by=["living_alone", "sex"],
     ),
 
 Measure(
-        id="ocd_la_and_sex",
+        id="ocd_sex",
         numerator="ocd",
         denominator="population",
         group_by=["living_alone", "sex"],
     ),
 
 Measure(
-        id="severe_mental_illness_la_and_sex",
-        numerator="severe_mental_illness",
+        id="severe_mental_sex",
+        numerator="severe_mental",
         denominator="population",
         group_by=["living_alone", "sex"],
     ),
 
 Measure(
-        id="eating_disorder_la_and_sex",
+        id="eating_disorder_sex",
         numerator="eating_disorder",
         denominator="population",
         group_by=["living_alone", "sex"],
     ),
 
 Measure(
-        id="self_harm_la_and_sex",
+        id="self_harm_sex",
         numerator="self_harm",
         denominator="population",
         group_by=["living_alone", "sex"],
@@ -695,42 +695,42 @@ Measure(
 
 # STRATIFIED BY LIVING ALONE AND AGE
 Measure(
-        id="depression_la_and_age",
+        id="depression_ageband_broad",
         numerator="depression",
         denominator="population",
         group_by=["living_alone", "ageband_broad"],
     ),
 
 Measure(
-        id="anxiety_la_and_age",
+        id="anxiety_ageband_broad",
         numerator="anxiety",
         denominator="population",
         group_by=["living_alone", "ageband_broad"],
     ),
 
 Measure(
-        id="ocd_la_and_age",
+        id="ocd_ageband_broad",
         numerator="ocd",
         denominator="population",
         group_by=["living_alone", "ageband_broad"],
     ),
 
 Measure(
-        id="severe_mental_illness_la_and_age",
-        numerator="severe_mental_illness",
+        id="severe_mental_ageband_broad",
+        numerator="severe_mental",
         denominator="population",
         group_by=["living_alone", "ageband_broad"],
     ),
 
 Measure(
-        id="eating_disorder_la_and_age",
+        id="eating_disorder_ageband_broad",
         numerator="eating_disorder",
         denominator="population",
         group_by=["living_alone", "ageband_broad"],
     ),
 
 Measure(
-        id="self_harm_la_and_age",
+        id="self_harm_ageband_broad",
         numerator="self_harm",
         denominator="population",
         group_by=["living_alone", "ageband_broad"],
@@ -738,42 +738,42 @@ Measure(
 
 # STRATIFIED BY LIVING ALONE AND ETHNICITY
 Measure(
-        id="depression_la_and_eth",
+        id="depression_ethnicity6",
         numerator="depression",
         denominator="population",
         group_by=["living_alone", "ethnicity6"],
     ),
 
 Measure(
-        id="anxiety_la_and_eth",
+        id="anxiety_ethnicity6",
         numerator="anxiety",
         denominator="population",
         group_by=["living_alone", "ethnicity6"],
     ),
 
 Measure(
-        id="ocd_la_and_eth",
+        id="ocd_ethnicity6",
         numerator="ocd",
         denominator="population",
         group_by=["living_alone", "ethnicity6"],
     ),
 
 Measure(
-        id="severe_mental_illness_la_and_eth",
-        numerator="severe_mental_illness",
+        id="severe_mental_ethnicity6",
+        numerator="severe_mental",
         denominator="population",
         group_by=["living_alone", "ethnicity6"],
     ),
 
 Measure(
-        id="eating_disorder_la_and_eth",
+        id="eating_disorder_ethnicity6",
         numerator="eating_disorder",
         denominator="population",
         group_by=["living_alone", "ethnicity6"],
     ),
 
 Measure(
-        id="self_harm_la_and_eth",
+        id="self_harm_ethnicity6",
         numerator="self_harm",
         denominator="population",
         group_by=["living_alone", "ethnicity6"],
@@ -781,42 +781,42 @@ Measure(
 
 # STRATIFIED BY LIVING ALONE AND IMD
 Measure(
-        id="depression_la_and_ses",
+        id="depression_imd",
         numerator="depression",
         denominator="population",
         group_by=["living_alone", "imd"],
     ),
 
 Measure(
-        id="anxiety_la_and_ses",
+        id="anxiety_imd",
         numerator="anxiety",
         denominator="population",
         group_by=["living_alone", "imd"],
     ),
 
 Measure(
-        id="ocd_la_and_ses",
+        id="ocd_imd",
         numerator="ocd",
         denominator="population",
         group_by=["living_alone", "imd"],
     ),
 
 Measure(
-        id="severe_mental_illness_la_and_ses",
-        numerator="severe_mental_illness",
+        id="severe_mental_imd",
+        numerator="severe_mental",
         denominator="population",
         group_by=["living_alone", "imd"],
     ),
 
 Measure(
-        id="eating_disorder_la_and_ses",
+        id="eating_disorder_imd",
         numerator="eating_disorder",
         denominator="population",
         group_by=["living_alone", "imd"],
     ),
 
 Measure(
-        id="self_harm_la_and_ses",
+        id="self_harm_imd",
         numerator="self_harm",
         denominator="population",
         group_by=["living_alone", "imd"],
@@ -824,42 +824,42 @@ Measure(
 
 # STRATIFIED BY LIVING ALONE AND REGION (STP)
 Measure(
-        id="depression_la_and_stp",
+        id="depression_stp",
         numerator="depression",
         denominator="population",
         group_by=["living_alone", "stp"],
     ),
 
 Measure(
-        id="anxiety_la_and_stp",
+        id="anxiety_stp",
         numerator="anxiety",
         denominator="population",
         group_by=["living_alone", "stp"],
     ),
 
 Measure(
-        id="ocd_la_and_stp",
+        id="ocd_stp",
         numerator="ocd",
         denominator="population",
         group_by=["living_alone", "stp"],
     ),
 
 Measure(
-        id="severe_mental_illness_la_and_stp",
-        numerator="severe_mental_illness",
+        id="severe_mental_stp",
+        numerator="severe_mental",
         denominator="population",
         group_by=["living_alone", "stp"],
     ),
 
 Measure(
-        id="eating_disorder_la_and_stp",
+        id="eating_disorder_stp",
         numerator="eating_disorder",
         denominator="population",
         group_by=["living_alone", "stp"],
     ),
 
 Measure(
-        id="self_harm_la_and_stp",
+        id="self_harm_stp",
         numerator="self_harm",
         denominator="population",
         group_by=["living_alone", "stp"],
@@ -867,42 +867,42 @@ Measure(
 
 # STRATIFIED BY LIVING ALONE AND RURAL/URBAN 
 Measure(
-        id="depression_la_and_urban",
+        id="depression_urban",
         numerator="depression",
         denominator="population",
         group_by=["living_alone", "urban"],
     ),
 
 Measure(
-        id="anxiety_la_and_urban",
+        id="anxiety_urban",
         numerator="anxiety",
         denominator="population",
         group_by=["living_alone", "urban"],
     ),
 
 Measure(
-        id="ocd_la_and_urban",
+        id="ocd_urban",
         numerator="ocd",
         denominator="population",
         group_by=["living_alone", "urban"],
     ),
 
 Measure(
-        id="severe_mental_illness_la_and_urban",
-        numerator="severe_mental_illness",
+        id="severe_mental_urban",
+        numerator="severe_mental",
         denominator="population",
         group_by=["living_alone", "urban"],
     ),
 
 Measure(
-        id="eating_disorder_la_and_urban",
+        id="eating_disorder_urban",
         numerator="eating_disorder",
         denominator="population",
         group_by=["living_alone", "urban"],
     ),
 
 Measure(
-        id="self_harm_la_and_urban",
+        id="self_harm_urban",
         numerator="self_harm",
         denominator="population",
         group_by=["living_alone", "urban"],
@@ -910,44 +910,44 @@ Measure(
 
 
 
-# STRATIFIED BY LIVING ALONE AND SHIELDING 
+# STRATIFIED BY LIVING ALONE AND shielded 
 Measure(
-        id="depression_la_and_shielding",
+        id="depression_shielded",
         numerator="depression",
         denominator="population",
         group_by=["living_alone", "shielded"],
     ),
 
 Measure(
-        id="anxiety_la_and_shielding",
+        id="anxiety_shielded",
         numerator="anxiety",
         denominator="population",
         group_by=["living_alone", "shielded"],
     ),
 
 Measure(
-        id="ocd_la_and_shielding",
+        id="ocd_shielded",
         numerator="ocd",
         denominator="population",
         group_by=["living_alone", "shielded"],
     ),
 
 Measure(
-        id="severe_mental_illness_la_and_shielding",
-        numerator="severe_mental_illness",
+        id="severe_mental_shielded",
+        numerator="severe_mental",
         denominator="population",
         group_by=["living_alone", "shielded"],
     ),
 
 Measure(
-        id="eating_disorder_la_and_shielding",
+        id="eating_disorder_shielded",
         numerator="eating_disorder",
         denominator="population",
         group_by=["living_alone", "shielded"],
     ),
 
 Measure(
-        id="self_harm_la_and_shielding",
+        id="self_harm_shielded",
         numerator="self_harm",
         denominator="population",
         group_by=["living_alone", "shielded"],
@@ -955,45 +955,45 @@ Measure(
 
 # STRATIFIED BY LIVING ALONE AND PREVIOUS MENTAL DISORDERS 
 Measure(
-        id="depression_la_and_historymental",
+        id="depression_prev_mental_dis",
         numerator="depression",
         denominator="population",
-        group_by=["living_alone", "previous_mental_disorder"],
+        group_by=["living_alone", "prev_mental_dis"],
     ),
 
 Measure(
-        id="anxiety_la_and_historymental",
+        id="anxiety_prev_mental_dis",
         numerator="anxiety",
         denominator="population",
-        group_by=["living_alone", "previous_mental_disorder"],
+        group_by=["living_alone", "prev_mental_dis"],
     ),
 
 Measure(
-        id="ocd_la_and_historymental",
+        id="ocd_prev_mental_dis",
         numerator="ocd",
         denominator="population",
-        group_by=["living_alone", "previous_mental_disorder"],
+        group_by=["living_alone", "prev_mental_dis"],
     ),
 
 Measure(
-        id="severe_mental_illness_la_and_historymental",
-        numerator="severe_mental_illness",
+        id="severe_mental_prev_mental_dis",
+        numerator="severe_mental",
         denominator="population",
-        group_by=["living_alone", "previous_mental_disorder"],
+        group_by=["living_alone", "prev_mental_dis"],
     ),
 
 Measure(
-        id="eating_disorder_la_and_historymental",
+        id="eating_disorder_prev_mental_dis",
         numerator="eating_disorder",
         denominator="population",
-        group_by=["living_alone", "previous_mental_disorder"],
+        group_by=["living_alone", "prev_mental_dis"],
     ),
 
 Measure(
-        id="self_harm_la_and_historymental",
+        id="self_harm_prev_mental_dis",
         numerator="self_harm",
         denominator="population",
-        group_by=["living_alone", "previous_mental_disorder"],
+        group_by=["living_alone", "prev_mental_dis"],
     ),
 
 

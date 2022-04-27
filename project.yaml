@@ -24,7 +24,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: output/modelcheck.txt
-        figures: output/tabfig/checks_*.eps
+        figures: output/tabfig/checks_*.svg
   # Model coefficients from time series analysis     
   describe:
     run: stata-mp:latest analysis/timeseries.do
@@ -40,5 +40,5 @@ actions:
     outputs:
       moderately_sensitive:
         log: output/lines.txt
-        results: output/tabfig/lines_*.eps
+        results: output/tabfig/lines_*.svg
       

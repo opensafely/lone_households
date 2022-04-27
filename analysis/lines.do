@@ -20,16 +20,20 @@ capture mkdir "$tabfigdir"
 
 *Log file
 cap log close
-log using $outdir/lines.txt, replace text
+cap log using $outdir/lines.txt, replace text
 
-foreach x in anxiety depression ocd self_harm severe_mental_illness {
+*Create macros
+local outcome anxiety depression eating_disorder ocd self_harm severe_mental
+local strata sex ageband_broad ethnicity6 imd stp urban shielded prev_mental_dis
+
+foreach x in `outcome' {
 	import delimited $outdir/measures/measure_`x'_rate.csv, clear	//get csv
 	*Create binary variables for time series
 	encode living_alone, gen(bin_living)
 	*Format time
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
-	gen postcovid=(temp_date>=22006)
+	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
 	gen month=mofd(temp_date)
 	format month %tm
 	*Value to rate per 100k
@@ -37,11 +41,36 @@ foreach x in anxiety depression ocd self_harm severe_mental_illness {
 	label variable rate "Rate of `x' per 100,000"
 	*Set time series
 	tsset bin_living temp_date
-	*Ts line graphs by strata
+	*Ts line graphs by HH status
 	tsline rate, by(bin_living) xlabel(, angle(45) format(%dM-CY)) ///
 	ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
 	ylabel(, format(%9.0fc))
-	graph export $tabfigdir/lines_`x'.eps, as(eps) replace
+	graph export $tabfigdir/lines_`x'.svg, as(svg) replace
+	******Stratified Time-series models*******
+	foreach y in `strata' {
+			import delimited $outdir/measures/measure_`x'_`y'.csv, clear	//get csv
+			*Create cross product for time series
+			tostring `y', replace
+			gen temp_var = cond(living_alone < `y', living_alone + `y', `y' + living_alone)
+			encode temp_var, gen(hh_`y')
+			*Format time
+			gen temp_date=date(date, "YMD")
+			format temp_date %td
+			gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+			gen month=mofd(temp_date)
+			format month %tm
+			drop temp_date
+			*Value to rate per 100k
+			gen rate = value*100000
+			*Run time series with EWH-robust SE and 1 Lag
+			tsset hh_`y' month
+			*Ts line graphs by Strata and HH status
+			tsline rate, by(hh_`y') xlabel(, angle(45) format(%dM-CY)) ///
+			ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
+			ylabel(, format(%9.0fc))
+			graph export $tabfigdir/lines_`x'_`y'.svg, as(svg) replace
+
+	}
 }
 
 
