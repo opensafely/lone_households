@@ -30,7 +30,7 @@ study = StudyDefinition(
 
 
     # define the study population 
-    # all study definitions have to have a study population definition - this selects all the patients for whom you want information
+    # all the study definitions have to have a study population definition - this selects all the patients for whom you want information
     # use the "patients.satisfying()" function to combine information from multiple different variables
     
     # define the study index date
@@ -59,14 +59,14 @@ study = StudyDefinition(
    
     # define the study variables
 
-    # DEMOGRAPHICS
+    # DEMOGRAPHICS - sex, age, ethnicity
 
         ## sex 
         sex=patients.sex(
             return_expectations={
                 "rate": "universal",
                 "category": {"ratios": {"M": 0.49, "F": 0.51}},
-            }
+            } 
         ),
 
         ## age 
