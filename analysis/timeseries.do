@@ -79,7 +79,7 @@ foreach x in `outcome' {
 			replace season = 3 if inrange(month(temp_date),9,11)
 			label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
 			label values season seasonlab
-			drop temp_date
+			drop temp_date temp_var
 			*Value to rate per 100k
 			gen rate = value*100000
 			*Run time series with EWH-robust SE and 1 Lag
@@ -92,8 +92,13 @@ foreach x in `outcome' {
 			matrix a = r(table)'
 			putexcel A6 = matrix(a), rownames
 			putexcel save
+			import excel using $tabfigdir/tsreg_tables.xlsx, sheet(`x'_`y') clear
+			export delimited using $tabfigdir/tsreg_tables_`x'_`y'.csv, replace
 	}
 
+	import excel using $tabfigdir/tsreg_tables.xlsx, sheet(`x') clear
+	export delimited using $tabfigdir/tsreg_tables_`x'.csv, replace	
+	
 }
 
 log close
