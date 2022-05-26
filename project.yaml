@@ -33,6 +33,7 @@ actions:
       moderately_sensitive:
         log: output/tsreg.txt
         tables: output/tabfig/tsreg_tables*.csv
+        figures: output/tabfig/margin_*.svg
   # Line graphs
   graph:
     run: stata-mp:latest analysis/lines.do

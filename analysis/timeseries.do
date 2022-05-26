@@ -58,6 +58,9 @@ foreach x in `outcome' {
 	matrix a = r(table)'
 	putexcel A6 = matrix(a), rownames
 	putexcel save
+	quietly margins postcovid##bin_living
+	marginsplot
+	graph export $tabfigdir/margin_`x'.svg, as(svg) replace
 	******Stratified Time-series models*******
 	foreach y in `strata' {
 			import delimited $outdir/measures/measure_`x'_`y'.csv, clear	//get csv
@@ -92,6 +95,9 @@ foreach x in `outcome' {
 			matrix a = r(table)'
 			putexcel A6 = matrix(a), rownames
 			putexcel save
+			quietly margins postcovid##hh_`y'
+			marginsplot
+			graph export $tabfigdir/margin_`x'_`y'.svg, as(svg) replace
 			import excel using $tabfigdir/tsreg_tables.xlsx, sheet(`x'_`y') clear
 			export delimited using $tabfigdir/tsreg_tables_`x'_`y'.csv, replace
 	}
