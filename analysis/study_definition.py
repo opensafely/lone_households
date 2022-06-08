@@ -50,7 +50,7 @@ study = StudyDefinition(
         has_follow_up AND
         is_registered_with_tpp_feb2020 AND
         (stp != "") AND
-        (imd ! = "0") AND
+        (imd != "0") AND
         household_size <= 15
         """,
           
