@@ -30,11 +30,11 @@ study = StudyDefinition(
 
 
     # define the study population 
-    # all study definitions have to have a study population definition - this selects all the patients for whom you want information
+    # all the study definitions have to have a study population definition - this selects all the patients for whom you want information
     # use the "patients.satisfying()" function to combine information from multiple different variables
     
     # define the study index date
-    index_date="2018-01-01",    
+    index_date="2018-03-01",    
 
     # INCLUDE: age 18+ on index date, male or female, registered with TPP at index date, with 3 months complete registration, a valid address and postcode
     # EXCLUDE: 15+ people in the household, missing age, missing sex, missing STP region, missing IMD, any person in household is care home, joined TPP after 01/02/2020
@@ -50,7 +50,7 @@ study = StudyDefinition(
         has_follow_up AND
         is_registered_with_tpp_feb2020 AND
         (stp != "") AND
-        (imd = "1" OR "2" OR "3" OR "4" OR "5") AND
+        (imd ! = "0") AND
         household_size <= 15
         """,
           
@@ -59,14 +59,14 @@ study = StudyDefinition(
    
     # define the study variables
 
-    # DEMOGRAPHICS
+    # DEMOGRAPHICS - sex, age, ethnicity
 
         ## sex 
         sex=patients.sex(
             return_expectations={
                 "rate": "universal",
                 "category": {"ratios": {"M": 0.49, "F": 0.51}},
-            }
+            } 
         ),
 
         ## age 

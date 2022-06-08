@@ -328,18 +328,6 @@ study = StudyDefinition(
             }, 
         ), 
 
-        ## EATING DISORDERS
-        eating_disorder=patients.with_these_clinical_events(
-            combine_codelists(
-                eating_disorder_codes,
-                eating_disorder_icd_codes,
-            ),    
-            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
-           returning="binary_flag",
-            return_expectations={
-                "incidence": 0.1,
-            }, 
-        ), 
 
         ## SEVERE MENTAL ILLNESS
         severe_mental_illness=patients.with_these_clinical_events(
