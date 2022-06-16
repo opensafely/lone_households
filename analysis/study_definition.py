@@ -51,7 +51,8 @@ study = StudyDefinition(
         is_registered_with_tpp_feb2020 AND
         (region != "") AND
         (imd != "0") AND
-        household_size <= 15
+        household_size <= 15 AND
+        household_size > 0
         """,
           
     ),
