@@ -24,7 +24,7 @@ cap log using $outdir/modelcheck.txt, replace text
 
 *Create macros
 local outcome anxiety depression eating_disorder ocd self_harm severe_mental
-local strata sex ageband_broad ethnicity6 imd stp urban shielded prev_mental_dis
+local strata sex ageband_broad ethnicity6 imd region urban shielded prev_mental_dis
 
 foreach x in `outcome' {
 	import delimited $outdir/measures/measure_`x'_rate.csv, clear	//get csv

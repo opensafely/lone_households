@@ -24,7 +24,7 @@ cap log using $outdir/tsreg.txt, replace text
 
 *Create macros
 local outcome anxiety depression eating_disorder ocd self_harm severe_mental
-local strata sex ageband_broad ethnicity6 imd stp urban shielded prev_mental_dis
+local strata sex ageband_broad ethnicity6 imd region urban shielded prev_mental_dis
 
 *General Time-series models
 foreach x in `outcome' {
