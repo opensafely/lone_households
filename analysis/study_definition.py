@@ -37,7 +37,7 @@ study = StudyDefinition(
     index_date="2018-03-01",    
 
     # INCLUDE: age 18+ on index date, male or female, registered with TPP at index date, with 3 months complete registration, a valid address and postcode
-    # EXCLUDE: 15+ people in the household, missing age, missing sex, missing STP region, missing IMD, any person in household is care home, joined TPP after 01/02/2020
+    # EXCLUDE: 15+ people in the household, missing age, missing sex, missing region, missing IMD, any person in household is care home, joined TPP after 01/02/2020
 
     population=patients.satisfying(
         # first argument is a string defining the population of interest using elementary logic syntax (= != < <= >= > AND OR NOT + - * /)
@@ -49,7 +49,7 @@ study = StudyDefinition(
         (care_home_type = "PR") AND
         has_follow_up AND
         is_registered_with_tpp_feb2020 AND
-        (stp != "") AND
+        (region != "") AND
         (imd != "0") AND
         household_size <= 15
         """,
@@ -242,25 +242,23 @@ study = StudyDefinition(
                 },
             ),
 
-        ## STP REGION     
-        stp=patients.registered_practice_as_of(
-            "2020-02-01",
-            returning="stp_code",
-            return_expectations={
-                "rate": "universal",
-                "category": {
-                    "ratios": {
-                        "STP1": 0.1,
-                        "STP2": 0.1,
-                        "STP3": 0.1,
-                        "STP4": 0.1,
-                        "STP5": 0.1,
-                        "STP6": 0.1,
-                        "STP7": 0.1,
-                        "STP8": 0.1,
-                        "STP9": 0.1,
-                        "STP10": 0.1,
-                    }
+        ## REGION     
+        region=patients.registered_practice_as_of(
+        "index_date",
+        returning="nuts1_region_name",
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {
+                    "North East": 0.1,
+                    "North West": 0.1,
+                    "Yorkshire and the Humber": 0.1,
+                    "East Midlands": 0.1,
+                    "West Midlands": 0.1,
+                    "East of England": 0.1,
+                    "London": 0.2,
+                    "South East": 0.2,
+                    },
                 },
             },
         ),
@@ -822,47 +820,47 @@ Measure(
         group_by=["living_alone", "imd"],
     ),
 
-# STRATIFIED BY LIVING ALONE AND REGION (STP)
+# STRATIFIED BY LIVING ALONE AND REGION
 Measure(
-        id="depression_stp",
+        id="depression_region",
         numerator="depression",
         denominator="population",
-        group_by=["living_alone", "stp"],
+        group_by=["living_alone", "region"],
     ),
 
 Measure(
-        id="anxiety_stp",
+        id="anxiety_region",
         numerator="anxiety",
         denominator="population",
-        group_by=["living_alone", "stp"],
+        group_by=["living_alone", "region"],
     ),
 
 Measure(
-        id="ocd_stp",
+        id="ocd_region",
         numerator="ocd",
         denominator="population",
-        group_by=["living_alone", "stp"],
+        group_by=["living_alone", "region"],
     ),
 
 Measure(
-        id="severe_mental_stp",
+        id="severe_mental_region",
         numerator="severe_mental",
         denominator="population",
-        group_by=["living_alone", "stp"],
+        group_by=["living_alone", "region"],
     ),
 
 Measure(
-        id="eating_disorder_stp",
+        id="eating_disorder_region",
         numerator="eating_disorder",
         denominator="population",
-        group_by=["living_alone", "stp"],
+        group_by=["living_alone", "region"],
     ),
 
 Measure(
-        id="self_harm_stp",
+        id="self_harm_region",
         numerator="self_harm",
         denominator="population",
-        group_by=["living_alone", "stp"],
+        group_by=["living_alone", "region"],
     ),
 
 # STRATIFIED BY LIVING ALONE AND RURAL/URBAN 
