@@ -89,6 +89,12 @@
       "url": "https://codelists.opensafely.org/codelist/user/hjforbes/suicide-icd-10/3b53a18e/",
       "downloaded_at": "2022-03-03 13:28:08.152757Z",
       "sha": "806be08bebc267e8abb26b8ceeefd713dacb1eb8"
+    },
+    "opensafely-selective-serotonin-reuptake-inhibitors-dmd.csv": {
+      "id": "opensafely/selective-serotonin-reuptake-inhibitors-dmd/6a572e55",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/selective-serotonin-reuptake-inhibitors-dmd/6a572e55/",
+      "downloaded_at": "2022-07-14 11:12:12.313012Z",
+      "sha": "85e3b0949455aa282fd26b09d523905127160789"
     }
   }
 }

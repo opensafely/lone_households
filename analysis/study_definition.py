@@ -175,6 +175,25 @@ study = StudyDefinition(
                 "incidence": 1,
             },
         ),
+
+        ## SENSITIVITY ANALYSIS - EXCLUDE HOUSEHOLDS OF MORE THAN 10
+        big_household=patients.categorised_as(
+            {
+                "missing": "DEFAULT",
+                "normal household": "household_size <= 10",
+                "big household": "household_size > 10",
+
+            },
+            return_expectations={
+                "rate":"universal",
+                "category": {
+                    "ratios": {
+                        "normal household": 0.99, 
+                        "big household": 0.01, 
+                        },
+                        },
+            },
+        ),
         
        ## living alone status
         living_alone=patients.categorised_as(
@@ -210,6 +229,25 @@ study = StudyDefinition(
         },
         ),
 
+## SENSITIVITY ANALYSIS - EXCLUDE HOUSEHOLDS WHERE TPP % IS LESS THAN 100%
+        all_tpp=patients.categorised_as(
+            {
+                "missing": "DEFAULT",
+                "not all TPP": "percent_tpp < 100",
+                "all TPP": "percent_tpp = 100",
+ 
+            },
+            return_expectations={
+                "rate":"universal",
+                "category": {
+                    "ratios": {
+                        "not all TPP": 0.90,
+                        "all TPP": 0.10,
+                        },
+                        },
+            },
+        ),
+
 
     # ADMINISTRATIVE INFORMATION
 
@@ -217,11 +255,11 @@ study = StudyDefinition(
             imd=patients.categorised_as(
                 {
                     "0": "DEFAULT",
-                    "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
-                    "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
-                    "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
-                    "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
-                    "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
+                    "1": """index_of_multiple_deprivation >=0 AND index_of_multiple_deprivation < 32800*1/5""",
+                    "2": """index_of_multiple_deprivation >= 32800*1/5 AND index_of_multiple_deprivation < 32800*2/5""",
+                    "3": """index_of_multiple_deprivation >= 32800*2/5 AND index_of_multiple_deprivation < 32800*3/5""",
+                    "4": """index_of_multiple_deprivation >= 32800*3/5 AND index_of_multiple_deprivation < 32800*4/5""",
+                    "5": """index_of_multiple_deprivation >= 32800*4/5 AND index_of_multiple_deprivation <= 32800""",
                 },
                 index_of_multiple_deprivation=patients.address_as_of(
                     "index_date",
@@ -309,6 +347,7 @@ study = StudyDefinition(
     # DEPRESSION, ANXIETY, OCD - PRIMARY CARE ONLY
     # SERIOUS MENTAL ILLNESS - PRIMARY CARE, A&E ATTENDANCE, HOSPITAL ADMISSION 
     # SELF HARM, EATING DISORDER - PRIMARY CARE, A&E ATTENDANCE, HOSPITAL ADMISSION, ONS MORTALITY
+    # SSRIs
 
         ## DEPRESSION
         depression=patients.with_these_clinical_events(
@@ -341,9 +380,6 @@ study = StudyDefinition(
         ), 
 
         ## SEVERE MENTAL ILLNESS
-        severe_mental=patients.satisfying(
-            "smi_gp OR smi_hosp OR smi_emerg",
-       
             smi_gp=patients.with_these_clinical_events(
                 codelist=severe_mental_illness_codes,
                 between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
@@ -370,12 +406,12 @@ study = StudyDefinition(
                     "incidence": 0.1,
                 }, 
             ),
+
+        severe_mental=patients.satisfying(
+            "smi_gp OR smi_hosp OR smi_emerg",
         ),
 
         ## SELF HARM
-        self_harm=patients.satisfying(
-            "self_harm_gp OR self_harm_hosp OR self_harm_emerg OR self_harm_death",
-
             self_harm_gp=patients.with_these_clinical_events(
                 combine_codelists(
                     self_harm_10plus_codes,
@@ -416,11 +452,12 @@ study = StudyDefinition(
                     "incidence": 0.1,
                 }, 
             ),
+
+        self_harm=patients.satisfying(
+            "self_harm_gp OR self_harm_hosp OR self_harm_emerg OR self_harm_death",
         ),
 
         ## EATING DISORDERS
-        eating_disorder=patients.satisfying(
-            "eating_gp OR eating_hosp OR eating_emerg OR eating_death",
             eating_gp=patients.with_these_clinical_events(
                 codelist=eating_disorders_codes,
                 between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
@@ -455,8 +492,20 @@ study = StudyDefinition(
                     "incidence": 0.1,
                 }, 
             ),
+
+        eating_disorder=patients.satisfying(
+            "eating_gp OR eating_hosp OR eating_emerg OR eating_death",
         ),
 
+        # SSRIs
+            ssri=patients.with_these_medications(
+            codelist=ssri_codes,
+            between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"],
+            returning="binary_flag",
+            return_expectations={
+                "incidence": 0.1,
+                }
+            ),  
 
 
 
@@ -596,7 +645,6 @@ study = StudyDefinition(
 
 
 
-
 )
 
 # MEASURES FOR TIME SERIES
@@ -646,7 +694,91 @@ measures = [
         group_by=["living_alone"],
     ),
 
+    Measure(
+        id="ssri_rate",
+        numerator="ssri",
+        denominator="population",
+        group_by=["living_alone"],
+    ),
 
+# SEPARATED PRIMARY CARE, SECONDARY CARE AND MORTALITY MEASURES FOR SELF HARM, SEVERE MENTAL ILLNESS AND EATING DISORDERS
+
+    Measure(
+            id="self_harmPC_rate",
+            numerator="self_harm_gp",
+            denominator="population",
+            group_by=["living_alone"],
+        ),
+
+    Measure(
+            id="self_harmSC_rate",
+            numerator="self_harm_hosp",
+            denominator="population",
+            group_by=["living_alone"],
+        ),
+
+    Measure(
+            id="self_harmEC_rate",
+            numerator="self_harm_emerg",
+            denominator="population",
+            group_by=["living_alone"],
+        ),        
+
+    Measure(
+            id="self_harmDeath_rate",
+            numerator="self_harm_death",
+            denominator="population",
+            group_by=["living_alone"],
+        ),        
+
+    Measure(
+            id="eatingPC_rate",
+            numerator="eating_gp",
+            denominator="population",
+            group_by=["living_alone"],
+        ),
+
+    Measure(
+            id="eatingSC_rate",
+            numerator="eating_hosp",
+            denominator="population",
+            group_by=["living_alone"],
+        ),
+
+    Measure(
+            id="eatingEC_rate",
+            numerator="eating_emerg",
+            denominator="population",
+            group_by=["living_alone"],
+        ),        
+
+    Measure(
+            id="eatingDeath_rate",
+            numerator="eating_death",
+            denominator="population",
+            group_by=["living_alone"],
+        ),        
+
+    Measure(
+            id="smiPC_rate",
+            numerator="smi_gp",
+            denominator="population",
+            group_by=["living_alone"],
+        ),
+
+    Measure(
+            id="smiSC_rate",
+            numerator="smi_hosp",
+            denominator="population",
+            group_by=["living_alone"],
+        ),
+
+    Measure(
+            id="smiEC_rate",
+            numerator="smi_emerg",
+            denominator="population",
+            group_by=["living_alone"],
+        ),        
 
 
 # STRATIFIED BY LIVING ALONE AND SEX
@@ -995,6 +1127,90 @@ Measure(
         group_by=["living_alone", "prev_mental_dis"],
     ),
 
+# STRATIFIED BY LIVING ALONE AND HOUSEHOLD SIZE - SENSITIVITY ANALYSIS 
+Measure(
+        id="depression_big_household",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "big_household"],
+    ),
 
+Measure(
+        id="anxiety_big_household",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "big_household"],
+    ),
+
+Measure(
+        id="ocd_big_household",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "big_household"],
+    ),
+
+Measure(
+        id="severe_mental_big_household",
+        numerator="severe_mental",
+        denominator="population",
+        group_by=["living_alone", "big_household"],
+    ),
+
+Measure(
+        id="eating_disorder_big_household",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "big_household"],
+    ),
+
+Measure(
+        id="self_harm_prev_big_household",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "big_household"],
+    ),
+
+# STRATIFIED BY LIVING ALONE AND PERCENT TPP 100% VS LESS THAN 100% - SENSITIVITY ANALYSIS 
+Measure(
+        id="depression_all_tpp",
+        numerator="depression",
+        denominator="population",
+        group_by=["living_alone", "all_tpp"],
+    ),
+
+Measure(
+        id="anxiety_all_tpp",
+        numerator="anxiety",
+        denominator="population",
+        group_by=["living_alone", "all_tpp"],
+    ),
+
+Measure(
+        id="ocd_all_tpp",
+        numerator="ocd",
+        denominator="population",
+        group_by=["living_alone", "all_tpp"],
+    ),
+
+Measure(
+        id="severe_mental_all_tpp",
+        numerator="severe_mental",
+        denominator="population",
+        group_by=["living_alone", "all_tpp"],
+    ),
+
+Measure(
+        id="eating_disorder_all_tpp",
+        numerator="eating_disorder",
+        denominator="population",
+        group_by=["living_alone", "all_tpp"],
+    ),
+
+Measure(
+        id="self_harm_prev_all_tpp",
+        numerator="self_harm",
+        denominator="population",
+        group_by=["living_alone", "all_tpp"],
+    ),
 
 ]

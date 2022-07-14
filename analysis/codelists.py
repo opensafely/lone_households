@@ -99,6 +99,12 @@ suicide_codes = codelist_from_csv(
     column="code",
 )
 
+# SSRIs
+ssri_codes = codelist_from_csv(
+    "codelists/opensafely-selective-serotonin-reuptake-inhibitors-dmd.csv",
+    system="snomed",
+    column="dmd_id",
+)
 
 # DEMOGRAPHIC CODELISTS
 ethnicity_codes_6 = codelist_from_csv(

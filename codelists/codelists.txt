@@ -45,6 +45,8 @@
     user/emilyherrett/self_harm_icd10/74529d08
     user/hjforbes/suicide-icd-10/3b53a18e
 
+    # SSRI prescribing
+    opensafely/selective-serotonin-reuptake-inhibitors-dmd/6a572e55
 
 # shielding - no list required as this is based on the presence or absence of a single SNOMED code
 
