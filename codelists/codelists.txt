@@ -6,8 +6,8 @@
     # depression
     opensafely/depression/2020-07-09
     
-    # anxiety
-    user/hjforbes/anxiety-symptoms-and-diagnoses/3088a1b6
+    # anxiety - changed to a more refined anxiety code list
+    opensafely/anxiety-disorders/6aef605a
     
     # Severe mental illness
     opensafely/psychosis-schizophrenia-bipolar-affective-disease/2020-07-09

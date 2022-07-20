@@ -1,0 +1,182 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/table1_descriptives.log
+  log type:  text
+ opened on:  15 Jul 2022, 09:33:50
+
+. 
+. cap mkdir ./output/tables
+
+. 
+. * Create  baseline tables for 3 years
+. forvalues i=2019/2021 {
+  2.   * Import csv file
+.     import delimited ./output/measures/tables/input_tables_`i'-01-01.csv, cle
+> ar
+  3.     *update variable with missing so that 0 is shown as unknown (just for 
+> this table)
+.     *(1) ethnicity
+.     replace ethnicity=6 if ethnicity==0
+  4.     label define eth5                   1 "White"                         
+>               ///
+>                                 2 "Mixed"                               ///  
+>                                            
+>                                 3 "Asian"                                    
+>    ///
+>                                 4 "Black"                                    
+>    ///
+>                                 5 "Other"                                    
+>    ///
+>                                 6 "Unknown"
+  5.                         
+. 
+.     label values ethnicity eth5
+  6.     safetab ethnicity, m
+  7. 
+.     *(2) IMD
+.     replace imd=6 if imd==0
+  8. 
+.     * Create age categories
+.     sum age
+  9.     egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
+ 10.     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years"
+>  3 ">80 years"
+ 11.     label values age_cat age
+ 12.     bys age_cat: sum age
+ 13. 
+.     * Create categories of household size
+.     sum household_size
+ 14.     egen household_cat = cut(household_size), at(0, 1, 16, 100) icodes
+ 15.     label define house 0 "missing" 1 "1-15 people" 2 "over 15 people"
+ 16.     bys household_cat: sum household_size
+ 17. 
+.     preserve
+ 18.     * Create baseline table
+.     table1_mc, vars(age_cat cate \ sex cate \ living_alone cate \ ethnicity6 
+> cate \ imd cate \ region cate \ urban cate \ household_cat cate \ care_home_t
+> ype cate \  ///
+>     depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ self_har
+> m cate \ eating_disorder cate \ prev_mental_dis cate ) clear
+ 19.     export delimited using ./output/tables/baseline_table_`i'.csv
+ 20.     restore
+ 21. 
+.     drop if ethnicity==6
+ 22.     gen white = (ethnicity==1)
+ 23.     gen mixed = (ethnicity==2)
+ 24.     gen asian = (ethnicity==3)
+ 25.     gen black = (ethnicity==4)
+ 26.     gen other = (ethnicity==5)
+ 27. 
+.     tempfile tempfile
+ 28.     preserve
+ 29.     keep if living_alone=="living_alone"
+ 30.     table1_mc, vars(age_cat cate \ sex cate \ living_alone cate \ ethnicit
+> y6 cate \ imd cate \ region cate \ urban cate \ household_cat cate \ care_hom
+> e_type cate \  ///
+>     depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ self_har
+> m cate \ eating_disorder cate \ prev_mental_dis cate ) clear
+ 31.     save `tempfile', replace
+ 32.     restore
+ 33.       preserve
+ 34.       keep if living_alone=="not living_alone"
+ 35.     table1_mc, vars(age_cat cate \ sex cate \ living_alone cate \ ethnicit
+> y6 cate \ imd cate \ region cate \ urban cate \ household_cat cate \ care_hom
+> e_type cate \  ///
+>     depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ self_har
+> m cate \ eating_disorder cate \ prev_mental_dis cate ) clear
+ 36.       append using `tempfile'
+ 37.       save `tempfile', replace
+ 38.       restore
+ 39.       }
+(40 vars, 1,000 obs)
+(0 real changes made)
+10
+
+ ethnicity6 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      White |        605       60.50       60.50
+      Asian |         77        7.70       68.20
+      Other |         68        6.80       75.00
+          . |        250       25.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(50 real changes made)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |      1,000      40.891    23.84071          0        107
+(205 missing values generated)
+
+-------------------------------------------------------------------------------
+-> age_cat = 18 - 40 years
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |        297    28.94949    6.442637         18         39
+
+-------------------------------------------------------------------------------
+-> age_cat = 41 - 60 years
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |        253    50.32016    5.904352         40         59
+
+-------------------------------------------------------------------------------
+-> age_cat = 61 - 80 years
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |        196    69.09184    5.736231         60         79
+
+-------------------------------------------------------------------------------
+-> age_cat = >80 years
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |         49    86.28571    5.094932         80        107
+
+-------------------------------------------------------------------------------
+-> age_cat = .
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |        205    8.741463    5.190157          0         17
+
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+household_~e |      1,000       2.573    1.061036         -1          6
+(1 missing value generated)
+
+-------------------------------------------------------------------------------
+-> household_cat = 0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+household_~e |         18           0           0          0          0
+
+-------------------------------------------------------------------------------
+-> household_cat = 1
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+household_~e |        981    2.623853    1.005192          1          6
+
+-------------------------------------------------------------------------------
+-> household_cat = .
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+household_~e |          1          -1           .         -1         -1
+
+command table1_mc is unrecognized
+r(199);
+
+end of do-file
+r(199);
+
+end of do-file
+
+r(199);
+
+

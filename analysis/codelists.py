@@ -34,7 +34,7 @@ severe_mental_illness_icd_codes = codelist_from_csv(
 
 # Anxiety - general
 anxiety_codes = codelist_from_csv(
-    "codelists/user-hjforbes-anxiety-symptoms-and-diagnoses.csv",
+    "codelists/opensafely-anxiety-disorders.csv",
     system="snomed",
     column="code",
 )

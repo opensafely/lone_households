@@ -27,8 +27,7 @@ cap mkdir ./output/tables
 * Create  baseline tables for 3 years
 forvalues i=2019/2021 {
   * Import csv file
-    import delimited ./output/measures/input_`i'-01-01.csv, clear
-
+    import delimited ./output/measures/tables/input_tables_`i'-01-01.csv, clear
     *update variable with missing so that 0 is shown as unknown (just for this table)
     *(1) ethnicity
     replace ethnicity=6 if ethnicity==0
@@ -47,15 +46,17 @@ forvalues i=2019/2021 {
     replace imd=6 if imd==0
 
     * Create age categories
+    sum age
     egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80 years"
     label values age_cat age
     bys age_cat: sum age
 
     * Create categories of household size
+    sum household_size
     egen household_cat = cut(household_size), at(0, 1, 16, 100) icodes
     label define house 0 "missing" 1 "1-15 people" 2 "over 15 people"
-    bys household_cat: sum household
+    bys household_cat: sum household_size
 
     preserve
     * Create baseline table
@@ -87,7 +88,7 @@ forvalues i=2019/2021 {
       restore
       }
     use `tempfile', clear
-    export delimited using ./output/tables/baseline_table_strata`i'.csv
+    export delimited using $projectdir/output/tables/baseline_table_strata`i'.csv
     }
 
 * Close log file 

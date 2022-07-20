@@ -12,11 +12,11 @@
       "downloaded_at": "2022-02-10 12:58:49.719516Z",
       "sha": "654835e97c0cee53307db7ebd8becf48d0e3f31b"
     },
-    "user-hjforbes-anxiety-symptoms-and-diagnoses.csv": {
-      "id": "user/hjforbes/anxiety-symptoms-and-diagnoses/3088a1b6",
-      "url": "https://codelists.opensafely.org/codelist/user/hjforbes/anxiety-symptoms-and-diagnoses/3088a1b6/",
-      "downloaded_at": "2022-02-23 13:04:53.745384Z",
-      "sha": "d5cfd421be9c680373365f60395a6a7b2d0ed82e"
+    "opensafely-anxiety-disorders.csv": {
+      "id": "opensafely/anxiety-disorders/6aef605a",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/anxiety-disorders/6aef605a/",
+      "downloaded_at": "2022-07-20 17:19:09.505807Z",
+      "sha": "7bd08502a20c7e84587944da97f66cae7c6fd19b"
     },
     "opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv": {
       "id": "opensafely/psychosis-schizophrenia-bipolar-affective-disease/2020-07-09",
