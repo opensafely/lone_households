@@ -58,7 +58,7 @@ foreach x in `outcome' {
 	matrix a = r(table)'
 	putexcel A6 = matrix(a), rownames
 	putexcel save
-	quietly margins postcovid##bin_living
+	quietly margins postcovid#bin_living
 	marginsplot
 	graph export $tabfigdir/margin_`x'.svg, as(svg) replace
 	******Stratified Time-series models*******
@@ -95,7 +95,7 @@ foreach x in `outcome' {
 			matrix a = r(table)'
 			putexcel A6 = matrix(a), rownames
 			putexcel save
-			quietly margins postcovid##hh_`y'
+			quietly margins postcovid#hh_`y'
 			marginsplot
 			graph export $tabfigdir/margin_`x'_`y'.svg, as(svg) replace
 			import excel using $tabfigdir/tsreg_tables.xlsx, sheet(`x'_`y') clear

@@ -44,6 +44,7 @@ foreach x in `outcome' {
 	*Ts line graphs by HH status
 	tsline rate, by(bin_living) xlabel(, angle(45) format(%dM-CY)) ///
 	ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
+	tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green)) ///
 	ylabel(, format(%9.0fc))
 	graph export $tabfigdir/lines_`x'.svg, as(svg) replace
 	******Stratified Time-series models*******
@@ -67,6 +68,7 @@ foreach x in `outcome' {
 			*Ts line graphs by Strata and HH status
 			tsline rate, by(hh_`y') xlabel(, angle(45) format(%dM-CY)) ///
 			ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
+			tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green)) ///
 			ylabel(, format(%9.0fc))
 			graph export $tabfigdir/lines_`x'_`y'.svg, as(svg) replace
 
