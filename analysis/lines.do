@@ -60,11 +60,10 @@ foreach x in `outcome' {
 			gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
 			gen month=mofd(temp_date)
 			format month %tm
-			drop temp_date
 			*Value to rate per 100k
 			gen rate = value*100000
 			*Run time series with EWH-robust SE and 1 Lag
-			tsset hh_`y' month
+			tsset hh_`y' temp_date
 			*Ts line graphs by Strata and HH status
 			tsline rate, by(hh_`y') xlabel(, angle(45) format(%dM-CY)) ///
 			ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
