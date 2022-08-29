@@ -62,9 +62,9 @@ forvalues i=2019/2021 {
     * Create baseline table
     table1_mc, vars(age_cat cate \ sex cate \ died cate \ living_alone cate \ ethnicity6 cate \ imd cate \ region cate \ urban cate \ household_cat cate \ big_household cate \  ///
     all_tpp cate \ shielded cate \ care_home_type cate \  ///
-    depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ smi_gp cate \ smi_hosp cate \ smi_emerg cate \  ///
-    self_harm cate \ self_harm_gp cate \ self_harm_hosp cate \  self_harm_emerg cate \ self_harm_death cate \ ///
-    eating_disorder cate \ eating_gp cate \ eating_hosp cate \ eating_emerg cate \ prev_mental_dis cate ) clear
+    depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ smi_gp cate \ smi_hosp cate \  ///
+    self_harm cate \ self_harm_gp cate \ self_harm_hosp cate \  self_harm_death cate \ ///
+    eating_disorder cate \ eating_gp cate \ eating_hosp cate \ prev_mental_dis cate ) clear
     export delimited using ./output/tables/baseline_table_`i'.csv
     restore
 
@@ -80,9 +80,9 @@ forvalues i=2019/2021 {
     keep if living_alone=="living alone"
     table1_mc, vars(age_cat cate \ sex cate \ died cate \ living_alone cate \ ethnicity6 cate \ imd cate \ region cate \ urban cate \ household_cat cate \ big_household cate \  ///
     all_tpp cate \ shielded cate \ care_home_type cate \  ///
-    depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ smi_gp cate \ smi_hosp cate \ smi_emerg cate \  ///
-    self_harm cate \ self_harm_gp cate \ self_harm_hosp cate \  self_harm_emerg cate \ self_harm_death cate \ ///
-    eating_disorder cate \ eating_gp cate \ eating_hosp cate \ eating_emerg cate \ prev_mental_dis cate ) clear
+    depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ smi_gp cate \ smi_hosp cate \  ///
+    self_harm cate \ self_harm_gp cate \ self_harm_hosp cate \  self_harm_death cate \ ///
+    eating_disorder cate \ eating_gp cate \ eating_hosp cate \ prev_mental_dis cate ) clear
     save `tempfile', replace
     restore
      
@@ -90,9 +90,9 @@ forvalues i=2019/2021 {
     keep if living_alone=="not living alone"
     table1_mc, vars(age_cat cate \ sex cate \ died cate \ living_alone cate \ ethnicity6 cate \ imd cate \ region cate \ urban cate \ household_cat cate \ big_household cate \  ///
     all_tpp cate \ shielded cate \ care_home_type cate \  ///
-    depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ smi_gp cate \ smi_hosp cate \ smi_emerg cate \  ///
-    self_harm cate \ self_harm_gp cate \ self_harm_hosp cate \  self_harm_emerg cate \ self_harm_death cate \ ///
-    eating_disorder cate \ eating_gp cate \ eating_hosp cate \ eating_emerg cate \ prev_mental_dis cate ) clear
+    depression cate \ anxiety cate \ ocd cate \ severe_mental cate \ smi_gp cate \ smi_hosp cate \  ///
+    self_harm cate \ self_harm_gp cate \ self_harm_hosp cate \  self_harm_death cate \ ///
+    eating_disorder cate \ eating_gp cate \ eating_hosp cate \ prev_mental_dis cate ) clear
     append using `tempfile'
     save `tempfile', replace
     restore
