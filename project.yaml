@@ -42,6 +42,16 @@ actions:
       moderately_sensitive:
         log: output/lines.txt
         results: output/tabfig/lines_*.svg
+  # Sensitivity analysis     
+  sensitivity:
+    run: stata-mp:latest analysis/sensitivity.do
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive:
+        log: output/sensitivity.txt
+        tables: output/tabfig/sens_tables*.csv
+        figures: output/tabfig/sens_mar_*.svg
+        results: output/tabfig/senslin_*.svg
   # Generates study populations for baseline tables at 3 timepoints
   generate_study_population_tables_2019:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2019-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing

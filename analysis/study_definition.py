@@ -177,7 +177,7 @@ study = StudyDefinition(
         ),
 
         ## SENSITIVITY ANALYSIS - EXCLUDE HOUSEHOLDS OF MORE THAN 10
-        big_household=patients.categorised_as(
+        big=patients.categorised_as(
             {
                 "missing": "DEFAULT",
                 "normal household": "household_size <= 10",
@@ -1129,45 +1129,45 @@ Measure(
 
 # STRATIFIED BY LIVING ALONE AND HOUSEHOLD SIZE - SENSITIVITY ANALYSIS 
 Measure(
-        id="depression_big_household",
+        id="depression_big",
         numerator="depression",
         denominator="population",
-        group_by=["living_alone", "big_household"],
+        group_by=["living_alone", "big"],
     ),
 
 Measure(
-        id="anxiety_big_household",
+        id="anxiety_big",
         numerator="anxiety",
         denominator="population",
-        group_by=["living_alone", "big_household"],
+        group_by=["living_alone", "big"],
     ),
 
 Measure(
-        id="ocd_big_household",
+        id="ocd_big",
         numerator="ocd",
         denominator="population",
-        group_by=["living_alone", "big_household"],
+        group_by=["living_alone", "big"],
     ),
 
 Measure(
-        id="severe_mental_big_household",
+        id="severe_mental_big",
         numerator="severe_mental",
         denominator="population",
-        group_by=["living_alone", "big_household"],
+        group_by=["living_alone", "big"],
     ),
 
 Measure(
-        id="eating_disorder_big_household",
+        id="eating_disorder_big",
         numerator="eating_disorder",
         denominator="population",
-        group_by=["living_alone", "big_household"],
+        group_by=["living_alone", "big"],
     ),
 
 Measure(
-        id="self_harm_prev_big_household",
+        id="self_harm_big",
         numerator="self_harm",
         denominator="population",
-        group_by=["living_alone", "big_household"],
+        group_by=["living_alone", "big"],
     ),
 
 # STRATIFIED BY LIVING ALONE AND PERCENT TPP 100% VS LESS THAN 100% - SENSITIVITY ANALYSIS 
@@ -1207,7 +1207,7 @@ Measure(
     ),
 
 Measure(
-        id="self_harm_prev_all_tpp",
+        id="self_harm_all_tpp",
         numerator="self_harm",
         denominator="population",
         group_by=["living_alone", "all_tpp"],
