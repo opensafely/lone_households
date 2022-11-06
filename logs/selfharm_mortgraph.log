@@ -1,0 +1,22 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /workspace/logs/selfharm_mortgraph.log
+  log type:  text
+ opened on:  26 Oct 2022, 07:16:22
+
+. *show low counts are non zero, by rounding up to the nearest 6 and then take 
+> the mid-point, i.e. counts <=6 get set to 3.
+. 
+. 
+. import delimited "$outdir/measures/measure_self_harmDeath_rate.csv", clear
+file /workspace/output/measures/measure_self_harmDeath_rate.csv not found
+r(601);
+
+end of do-file
+r(601);
+
+end of do-file
+
+r(601);
+
+

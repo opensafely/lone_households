@@ -76,5 +76,13 @@ actions:
       moderately_sensitive:
         log: logs/table1_descriptives.log
         tables: output/tables/baseline_table_*.csv
+  # Self harm mortality graph
+  create_selfharm_mortality:
+    run: stata-mp:latest analysis/self_harm_graph.do  
+    needs: []
+    outputs:
+      moderately_sensitive:
+        log: logs/selfharm_mortgraph.log
+        figures: output/tabfig/selfharm_mortgraph.svg
 
 
