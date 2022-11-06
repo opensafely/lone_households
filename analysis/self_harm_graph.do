@@ -65,10 +65,8 @@ import delimited ./output/measures/measure_self_harmDeath_rate.csv, clear
 	ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
 	tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green)) ///
 	ylabel(, format(%9.0fc))
-	graph export $tabfigdir/line_selfharmmort.svg, as(svg) replace
+	graph export ./output/tabfig/line_selfharmmort.svg, as(svg) replace
 
-	}
-}
 
 
 * Close log file 

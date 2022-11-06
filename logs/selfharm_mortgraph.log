@@ -2,21 +2,94 @@
       name:  <unnamed>
        log:  /workspace/logs/selfharm_mortgraph.log
   log type:  text
- opened on:  26 Oct 2022, 08:30:09
+ opened on:  26 Oct 2022, 09:32:49
 
 . *show low counts are non zero, by rounding up to the nearest 6 and then take 
 > the mid-point, i.e. counts <=6 get set to 3.
 . 
 . 
 . import delimited ./output/measures/measure_self_harmDeath_rate.csv, clear
-file ./output/measures/measure_self_harmDeath_rate.csv not found
-r(601);
+(5 vars, 94 obs)
+
+.         *Create binary variables for time series
+.         encode living_alone, gen(bin_living)
+
+.         *Format time
+.         gen temp_date=date(date, "YMD")
+
+.         format temp_date %td
+
+.         gen year=year(temp_date)
+
+.         gen month=month(temp_date)
+
+.         drop if year==2018
+(20 observations deleted)
+
+.         drop if year==2019 & month<3
+(4 observations deleted)
+
+.         drop year month
+
+.         
+.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+
+.         gen month=mofd(temp_date)
+
+.         format month %tm
+
+.         
+.         *round values to the mid-point of bands of 7
+.         /*
+>                 # 0 is mapped to 0,
+>                 # 1, 2, 3, 4, 5, 6, 7 is mapped to 4
+>                 # 8, 9, 10, 11, 12, 13, 14 is mapped to 11
+>                 # 15, 16, 17, 18, 19, 20, 21 is mapped to 18 
+>                 # etc.
+>         */
+.                         gen div7=self_harm_death/7
+
+.                         gen div7rounded=ceil(div7)
+
+.                         gen new_selfharmdeath=(div7rounded*7)-3
+
+.         
+.         *Create a variable showing the rounded number of events to rate per 1
+> 00k
+.         gen rounded7_rate=(new_selfharmdeath/population)*100000
+
+.         label variable rounded7_rate "Rate of self harm mortality per 100,000
+> "
+
+. 
+.         *Set time series
+.         tsset bin_living temp_date
+       panel variable:  bin_living (strongly balanced)
+        time variable:  temp_date, 01mar2019 to 01jan2022, but with gaps
+                delta:  1 day
+
+.         *Ts line graphs by HH status
+.         tsline rounded7_rate, by(bin_living) xlabel(, angle(45) format(%dM-CY
+> )) ///
+>         ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
+>         tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green
+> )) ///
+>         ylabel(, format(%9.0fc))
+
+.         graph export $tabfigdir/line_selfharmmort.svg, as(svg) replace
+(note: file /workspace/output/tabfig/line_selfharmmort.svg not found)
+(file /workspace/output/tabfig/line_selfharmmort.svg written in SVG format)
+
+. 
+.         }
+} is not a valid command name
+r(199);
 
 end of do-file
-r(601);
+r(199);
 
 end of do-file
 
-r(601);
+r(199);
 
 
