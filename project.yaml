@@ -83,6 +83,6 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/selfharm_mortgraph.log
-        figures: output/tabfig/selfharm_mortgraph.svg
+        figures: output/tabfig/line_selfharmmort.svg
 
 

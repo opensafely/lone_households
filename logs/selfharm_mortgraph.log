@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /workspace/logs/selfharm_mortgraph.log
   log type:  text
- opened on:  26 Oct 2022, 09:32:49
+ opened on:  26 Oct 2022, 11:33:25
 
 . *show low counts are non zero, by rounding up to the nearest 6 and then take 
 > the mid-point, i.e. counts <=6 get set to 3.
@@ -76,20 +76,17 @@
 > )) ///
 >         ylabel(, format(%9.0fc))
 
-.         graph export $tabfigdir/line_selfharmmort.svg, as(svg) replace
-(note: file /workspace/output/tabfig/line_selfharmmort.svg not found)
-(file /workspace/output/tabfig/line_selfharmmort.svg written in SVG format)
+.         graph export ./output/tabfig/line_selfharmmort.svg, as(svg) replace
+(note: file ./output/tabfig/line_selfharmmort.svg not found)
+(file ./output/tabfig/line_selfharmmort.svg written in SVG format)
 
 . 
-.         }
-} is not a valid command name
-r(199);
-
-end of do-file
-r(199);
-
-end of do-file
-
-r(199);
-
-
+. 
+. 
+. * Close log file 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/selfharm_mortgraph.log
+  log type:  text
+ closed on:  26 Oct 2022, 11:33:27
+-------------------------------------------------------------------------------
