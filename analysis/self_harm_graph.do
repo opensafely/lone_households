@@ -26,7 +26,7 @@ log using ./logs/selfharm_mortgraph.log, replace
 *show low counts are non zero, by rounding up to the nearest 6 and then take the mid-point, i.e. counts <=6 get set to 3.
 
 
-import delimited "$outdir/measures/measure_self_harmDeath_rate.csv", clear
+import delimited ./output/measures/measure_self_harmDeath_rate.csv, clear
 	*Create binary variables for time series
 	encode living_alone, gen(bin_living)
 	*Format time

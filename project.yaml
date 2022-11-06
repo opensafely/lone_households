@@ -79,7 +79,7 @@ actions:
   # Self harm mortality graph
   create_selfharm_mortality:
     run: stata-mp:latest analysis/self_harm_graph.do  
-    needs: []
+    needs: [generate_study_population, calculate_measures]
     outputs:
       moderately_sensitive:
         log: logs/selfharm_mortgraph.log
