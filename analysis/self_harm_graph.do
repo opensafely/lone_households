@@ -21,6 +21,9 @@ dis "$outdir"
 global tabfigdir $projectdir/output/tabfig
 dis "$tabfigdir"
 
+* Create directories required 
+capture mkdir "$tabfigdir"
+
 capture log close
 log using ./logs/selfharm_mortgraph.log, replace
 *show low counts are non zero, by rounding up to the nearest 6 and then take the mid-point, i.e. counts <=6 get set to 3.
