@@ -1,14 +1,16 @@
--------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  /workspace/logs/selfharm_mortgraph.log
+       log:  \\tsclient\lsh148121\Documents\GitHub\opensafely_lone_households\lone_households\logs/selfhar
+> m_mortgraph.log
   log type:  text
- opened on:  27 Oct 2022, 03:40:22
+ opened on:   8 Nov 2022, 21:15:51
 
-. *show low counts are non zero, by rounding up to the nearest 6 and then take 
-> the mid-point, i.e. counts <=6 get set to 3.
+. *show low counts are non zero, by rounding up to the nearest 6 and then take the mid-point, i.e. counts 
+> <=6 get set to 3.
 . 
 . 
 . import delimited ./output/measures/measure_self_harmDeath_rate.csv, clear
+(encoding automatically selected: ISO-8859-1)
 (5 vars, 94 obs)
 
 .         *Create binary variables for time series
@@ -53,45 +55,31 @@
 
 .                         gen new_selfharmdeath=(div7rounded*7)-3
 
+.                         replace new_selfharmdeath=0 if div7==0
+(0 real changes made)
+
 .         
-.         *Create a variable showing the rounded number of events to rate per 1
-> 00k
-.         gen rounded7_rate=(new_selfharmdeath/population)*100000
+.         *Create a variable showing the rounded number of events to rate per million
+.         gen rounded7_rate=(new_selfharmdeath/population)*1000000
 
-.         label variable rounded7_rate "Rate of self harm mortality per 100,000
-> "
+.         label variable rounded7_rate "Rate of self harm mortality per million"
 
-.         export delimited ./output/measures/measure_self_harmDeath_rate_rounde
-> d.csv, replace
-(note: file ./output/measures/measure_self_harmDeath_rate_rounded.csv not found
-> )
+.         export delimited ./output/measures/measure_self_harmDeath_rate_rounded.csv, replace
 file ./output/measures/measure_self_harmDeath_rate_rounded.csv saved
 
 .         *Set time series
 .         tsset bin_living temp_date
-       panel variable:  bin_living (strongly balanced)
-        time variable:  temp_date, 01mar2019 to 01jan2022, but with gaps
-                delta:  1 day
+
+Panel variable: bin_living (strongly balanced)
+ Time variable: temp_date, 01mar2019 to 01jan2022, but with gaps
+         Delta: 1 day
 
 .         *Ts line graphs by HH status
-.         tsline rounded7_rate, by(bin_living) xlabel(, angle(45) format(%dM-CY
-> )) ///
->         ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
->         tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green
-> )) ///
+.         tsline rounded7_rate, by(bin_living) xlabel(, angle(45) format(%dM-CY)) ///
+>         ytitle("Rate per million") tline(22006) legend(off) xtitle("") ///
+>         tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green)) ///
 >         ylabel(, format(%9.0fc))
 
-.         graph export $tabfigdir/line_selfharmmort.svg, as(svg) replace
-(note: file /workspace/output/tabfig/line_selfharmmort.svg not found)
-(file /workspace/output/tabfig/line_selfharmmort.svg written in SVG format)
+. 
+end of do-file
 
-. 
-. 
-. 
-. * Close log file 
-. log close
-      name:  <unnamed>
-       log:  /workspace/logs/selfharm_mortgraph.log
-  log type:  text
- closed on:  27 Oct 2022, 03:40:23
--------------------------------------------------------------------------------

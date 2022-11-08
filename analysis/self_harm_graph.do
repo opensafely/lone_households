@@ -56,16 +56,17 @@ import delimited ./output/measures/measure_self_harmDeath_rate.csv, clear
 			gen div7=self_harm_death/7
 			gen div7rounded=ceil(div7)
 			gen new_selfharmdeath=(div7rounded*7)-3
+			replace new_selfharmdeath=0 if div7==0
 	
-	*Create a variable showing the rounded number of events to rate per 100k
-	gen rounded7_rate=(new_selfharmdeath/population)*100000
-	label variable rounded7_rate "Rate of self harm mortality per 100,000"
+	*Create a variable showing the rounded number of events to rate per million
+	gen rounded7_rate=(new_selfharmdeath/population)*1000000
+	label variable rounded7_rate "Rate of self harm mortality per million"
 	export delimited ./output/measures/measure_self_harmDeath_rate_rounded.csv, replace
 	*Set time series
 	tsset bin_living temp_date
 	*Ts line graphs by HH status
 	tsline rounded7_rate, by(bin_living) xlabel(, angle(45) format(%dM-CY)) ///
-	ytitle("Rate per 100,000") tline(22006) legend(off) xtitle("") ///
+	ytitle("Rate per million") tline(22006) legend(off) xtitle("") ///
 	tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green)) ///
 	ylabel(, format(%9.0fc))
 	graph export $tabfigdir/line_selfharmmort.svg, as(svg) replace
