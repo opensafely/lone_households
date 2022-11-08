@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /workspace/logs/selfharm_mortgraph.log
   log type:  text
- opened on:  26 Oct 2022, 11:33:25
+ opened on:  27 Oct 2022, 03:40:22
 
 . *show low counts are non zero, by rounding up to the nearest 6 and then take 
 > the mid-point, i.e. counts <=6 get set to 3.
@@ -61,7 +61,12 @@
 .         label variable rounded7_rate "Rate of self harm mortality per 100,000
 > "
 
-. 
+.         export delimited ./output/measures/measure_self_harmDeath_rate_rounde
+> d.csv, replace
+(note: file ./output/measures/measure_self_harmDeath_rate_rounded.csv not found
+> )
+file ./output/measures/measure_self_harmDeath_rate_rounded.csv saved
+
 .         *Set time series
 .         tsset bin_living temp_date
        panel variable:  bin_living (strongly balanced)
@@ -76,9 +81,9 @@
 > )) ///
 >         ylabel(, format(%9.0fc))
 
-.         graph export ./output/tabfig/line_selfharmmort.svg, as(svg) replace
-(note: file ./output/tabfig/line_selfharmmort.svg not found)
-(file ./output/tabfig/line_selfharmmort.svg written in SVG format)
+.         graph export $tabfigdir/line_selfharmmort.svg, as(svg) replace
+(note: file /workspace/output/tabfig/line_selfharmmort.svg not found)
+(file /workspace/output/tabfig/line_selfharmmort.svg written in SVG format)
 
 . 
 . 
@@ -88,5 +93,5 @@
       name:  <unnamed>
        log:  /workspace/logs/selfharm_mortgraph.log
   log type:  text
- closed on:  26 Oct 2022, 11:33:27
+ closed on:  27 Oct 2022, 03:40:23
 -------------------------------------------------------------------------------

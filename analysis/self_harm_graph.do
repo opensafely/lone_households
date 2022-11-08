@@ -60,7 +60,7 @@ import delimited ./output/measures/measure_self_harmDeath_rate.csv, clear
 	*Create a variable showing the rounded number of events to rate per 100k
 	gen rounded7_rate=(new_selfharmdeath/population)*100000
 	label variable rounded7_rate "Rate of self harm mortality per 100,000"
-	save using ./output/measures/measure_self_harmDeath_rate_rounded.csv, replace
+	export delimited ./output/measures/measure_self_harmDeath_rate_rounded.csv, replace
 	*Set time series
 	tsset bin_living temp_date
 	*Ts line graphs by HH status
