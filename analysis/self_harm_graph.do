@@ -53,13 +53,23 @@ import delimited ./output/measures/measure_self_harmDeath_rate.csv, clear
 		# 15, 16, 17, 18, 19, 20, 21 is mapped to 18 
 		# etc.
 	*/
+			*numerator
 			gen div7=self_harm_death/7
 			gen div7rounded=ceil(div7)
 			gen new_selfharmdeath=(div7rounded*7)-3
 			replace new_selfharmdeath=0 if div7==0
-	
+			drop div7 div7rounded 
+
+			*denominator
+			gen div7=population/7
+			gen div7rounded=ceil(div7)
+			gen new_population=(div7rounded*7)-3
+			replace new_population=0 if div7==0
+			drop div7 div7rounded 
+
+
 	*Create a variable showing the rounded number of events to rate per million
-	gen rounded7_rate=(new_selfharmdeath/population)*1000000
+	gen rounded7_rate=(new_selfharmdeath/new_population)*1000000
 	label variable rounded7_rate "Rate of self harm mortality per million"
 	export delimited ./output/measures/measure_self_harmDeath_rate_rounded.csv, replace
 	*Set time series

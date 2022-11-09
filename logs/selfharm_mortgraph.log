@@ -1,16 +1,14 @@
-----------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  \\tsclient\lsh148121\Documents\GitHub\opensafely_lone_households\lone_households\logs/selfhar
-> m_mortgraph.log
+       log:  /workspace/logs/selfharm_mortgraph.log
   log type:  text
- opened on:   8 Nov 2022, 21:15:51
+ opened on:  27 Oct 2022, 16:20:43
 
-. *show low counts are non zero, by rounding up to the nearest 6 and then take the mid-point, i.e. counts 
-> <=6 get set to 3.
+. *show low counts are non zero, by rounding up to the nearest 6 and then take 
+> the mid-point, i.e. counts <=6 get set to 3.
 . 
 . 
 . import delimited ./output/measures/measure_self_harmDeath_rate.csv, clear
-(encoding automatically selected: ISO-8859-1)
 (5 vars, 94 obs)
 
 .         *Create binary variables for time series
@@ -49,6 +47,7 @@
 >                 # 15, 16, 17, 18, 19, 20, 21 is mapped to 18 
 >                 # etc.
 >         */
+.                         *numerator
 .                         gen div7=self_harm_death/7
 
 .                         gen div7rounded=ceil(div7)
@@ -58,28 +57,61 @@
 .                         replace new_selfharmdeath=0 if div7==0
 (0 real changes made)
 
-.         
-.         *Create a variable showing the rounded number of events to rate per million
-.         gen rounded7_rate=(new_selfharmdeath/population)*1000000
+.                         drop div7 div7rounded 
 
-.         label variable rounded7_rate "Rate of self harm mortality per million"
+. 
+.                         *denominator
+.                         gen div7=population/7
 
-.         export delimited ./output/measures/measure_self_harmDeath_rate_rounded.csv, replace
+.                         gen div7rounded=ceil(div7)
+
+.                         gen new_population=(div7rounded*7)-3
+
+.                         replace new_population=0 if div7==0
+(0 real changes made)
+
+.                         drop div7 div7rounded 
+
+. 
+. 
+.         *Create a variable showing the rounded number of events to rate per m
+> illion
+.         gen rounded7_rate=(new_selfharmdeath/new_population)*1000000
+
+.         label variable rounded7_rate "Rate of self harm mortality per million
+> "
+
+.         export delimited ./output/measures/measure_self_harmDeath_rate_rounde
+> d.csv, replace
+(note: file ./output/measures/measure_self_harmDeath_rate_rounded.csv not found
+> )
 file ./output/measures/measure_self_harmDeath_rate_rounded.csv saved
 
 .         *Set time series
 .         tsset bin_living temp_date
-
-Panel variable: bin_living (strongly balanced)
- Time variable: temp_date, 01mar2019 to 01jan2022, but with gaps
-         Delta: 1 day
+       panel variable:  bin_living (strongly balanced)
+        time variable:  temp_date, 01mar2019 to 01jan2022, but with gaps
+                delta:  1 day
 
 .         *Ts line graphs by HH status
-.         tsline rounded7_rate, by(bin_living) xlabel(, angle(45) format(%dM-CY)) ///
+.         tsline rounded7_rate, by(bin_living) xlabel(, angle(45) format(%dM-CY
+> )) ///
 >         ytitle("Rate per million") tline(22006) legend(off) xtitle("") ///
->         tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green)) ///
+>         tline(01jan2021 01may2021 01jan2022, lpattern(shortdash) lcolor(green
+> )) ///
 >         ylabel(, format(%9.0fc))
 
-. 
-end of do-file
+.         graph export $tabfigdir/line_selfharmmort.svg, as(svg) replace
+(note: file /workspace/output/tabfig/line_selfharmmort.svg not found)
+(file /workspace/output/tabfig/line_selfharmmort.svg written in SVG format)
 
+. 
+. 
+. 
+. * Close log file 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/selfharm_mortgraph.log
+  log type:  text
+ closed on:  27 Oct 2022, 16:20:44
+-------------------------------------------------------------------------------
