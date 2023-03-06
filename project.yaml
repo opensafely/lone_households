@@ -53,14 +53,13 @@ actions:
         figures: output/tabfig/sens_mar_*.svg
         results: output/tabfig/senslin_*.svg
   sensitivity2:
-    run: stata-mp:latest analysis/sensitivity_updated_alltpp_big households.do
+    run: stata-mp:latest analysis/sensitivity_updated_alltpp_big_households.do
     needs: [calculate_measures]
     outputs:
       moderately_sensitive:
         log: output/sensitivity_updated.txt
-        tables: output/tabfig/sens_tables*.csv
-        figures: output/tabfig/sens_mar_*.svg
-        results: output/tabfig/senslin_*.svg  
+        tables: output/tabfig/sens2_tables*.csv
+        figures: output/tabfig/sens2_mar_*.svg  
 # Generates study populations for baseline tables at 3 timepoints
   generate_study_population_tables_2019:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2019-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing

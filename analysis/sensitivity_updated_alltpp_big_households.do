@@ -8,8 +8,8 @@ Description:    Sensitivity analysis as per protocol
 
 
 *set filepaths
-*global projectdir `c(pwd)'
-global projectdir "\\tsclient\lsh148121\Documents\GitHub\opensafely_lone_households\lone_households"
+global projectdir `c(pwd)'
+*global projectdir "\\tsclient\lsh148121\Documents\GitHub\opensafely_lone_households\lone_households"
 dis "$projectdir"
 global outdir $projectdir/output
 dis "$outdir"
@@ -35,7 +35,7 @@ local outcome anxiety depression eating_disorder ocd self_harm_prev severe_menta
 foreach x in `outcome' {
 			import delimited "$outdir/measures/measure_`x'_big_household.csv", clear		//get csv
 			drop if big_household=="big household"
-			putexcel set $tabfigdir/sens_tables, sheet(`x'_big_household) modify			//open xlsx
+			putexcel set $tabfigdir/sens2_tables, sheet(`x'_big_household) modify			//open xlsx
 			*Create binary variables for time series
 			encode living_alone, gen(bin_living)
 			*Format time
@@ -67,11 +67,11 @@ foreach x in `outcome' {
 			putexcel save
 			quietly margins postcovid#bin_living
 			marginsplot
-			graph export $tabfigdir/margin_`x'_big_household.svg, as(svg) replace
+			graph export $tabfigdir/margin2_`x'_big_household.svg, as(svg) replace
 
-			import excel using $tabfigdir/sens_tables.xlsx, sheet(`x'_big_household) clear
-			export delimited using $tabfigdir/sens_tables_`x'_big_household.csv, replace	
-			graph export $tabfigdir/sens_mar_`x'_big_household.svg, as(svg) replace	
+			import excel using $tabfigdir/sens2_tables.xlsx, sheet(`x'_big_household) clear
+			export delimited using $tabfigdir/sens2_tables_`x'_big_household.csv, replace	
+			graph export $tabfigdir/sens2_mar_`x'_big_household.svg, as(svg) replace	
 	}
 	
 
@@ -79,7 +79,7 @@ foreach x in `outcome' {
 foreach x in `outcome' {
 			import delimited $outdir/measures/measure_`x'_all_tpp.csv, clear		//get csv
 			drop if all_tpp=="not all TPP"
-			putexcel set $tabfigdir/sens_tables, sheet(`x'_all_tpp) modify			//open xlsx
+			putexcel set $tabfigdir/sens2_tables, sheet(`x'_all_tpp) modify			//open xlsx
 			*Create binary variables for time series
 			encode living_alone, gen(bin_living)
 			*Format time
@@ -111,11 +111,11 @@ foreach x in `outcome' {
 			putexcel save
 			quietly margins postcovid#bin_living
 			marginsplot
-			graph export $tabfigdir/margin_`x'_all_tpp.svg, as(svg) replace
+			graph export $tabfigdir/margin2_`x'_all_tpp.svg, as(svg) replace
 
-			import excel using $tabfigdir/sens_tables.xlsx, sheet(`x'_all_tpp) clear
-			export delimited using $tabfigdir/sens_tables_`x'_all_tpp.csv, replace	
-			graph export $tabfigdir/sens_mar_`x'_all_tpp.svg, as(svg) replace	
+			import excel using $tabfigdir/sens2_tables.xlsx, sheet(`x'_all_tpp) clear
+			export delimited using $tabfigdir/sens2_tables_`x'_all_tpp.csv, replace	
+			graph export $tabfigdir/sens2_mar_`x'_all_tpp.svg, as(svg) replace	
 	}
 	
 
