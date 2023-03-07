@@ -24,7 +24,7 @@ cap log close
 cap log using $outdir/sensitivity_updated.txt, replace text
 
 *Create macros
-local outcome anxiety depression eating_disorder ocd self_harm_prev severe_mental
+local outcome anxiety depression eating_disorder ocd self_harm severe_mental
 *local alt_out self_harm eating 		//omit smi due to lack of death
 *local care PC EC SC Death
 *local smicare PC EC SC
