@@ -33,7 +33,7 @@ local outcome anxiety depression eating_disorder ocd self_harm_prev severe_menta
 
 *AMENDED CODE FOR Time-series models for big household
 foreach x in `outcome' {
-			import delimited "$outdir/measures/measure_`x'_big_household.csv", clear		//get csv
+			import delimited "$outdir/measures/measure_`x'_big.csv", clear		//get csv
 			drop if big_household=="big household"
 			putexcel set $tabfigdir/sens2_tables, sheet(`x'_big_household) modify			//open xlsx
 			*Create binary variables for time series
